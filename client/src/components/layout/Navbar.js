@@ -121,13 +121,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Dashboard() {
   const authContext = useContext(AuthContext);
-  const { isAuthenticated, loadUser } = authContext;
-
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     loadUser();
-  //   }
-  // }, []);
+  const { isAuthenticated } = authContext;
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);

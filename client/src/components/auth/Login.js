@@ -48,7 +48,7 @@ export default function SignIn(props) {
 
   const { setAlert } = alertContext;
 
-  const { login, error, clearErrors, isAuthenticated } = authContext;
+  const { login, error, clearErrors, isAuthenticated, msg } = authContext;
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -59,6 +59,7 @@ export default function SignIn(props) {
       setAlert(error, "error");
       clearErrors();
     }
+
     if (localStorage.name && localStorage.password) {
       setUser({ name: localStorage.name, password: localStorage.password });
     }

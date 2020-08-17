@@ -52,7 +52,6 @@ export default function SignUp(props) {
     loading,
     signUpSuccess,
     register,
-    loadingSpinner,
     msg,
   } = authContext;
 
@@ -103,8 +102,6 @@ export default function SignUp(props) {
         name,
         password,
       });
-
-      loadingSpinner(true);
     }
   };
 

@@ -48,7 +48,7 @@ export default function SignIn(props) {
 
   const { setAlert } = alertContext;
 
-  const { login, error, clearErrors, isAuthenticated, msg } = authContext;
+  const { login, error, clearErrors, isAuthenticated } = authContext;
 
   useEffect(() => {
     if (isAuthenticated) {

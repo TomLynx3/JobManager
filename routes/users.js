@@ -81,22 +81,12 @@ router.post(
 
         const dirPath = path.join("htmlTemplates/verification.html");
 
-        //Gte url
-        function getFormattedUrl(req) {
-          return url.format({
-            protocol: req.protocol,
-            host: req.get("host"),
-          });
-        }
-
-        const currentUrl = getFormattedUrl(req);
-
         readHTMLFile(dirPath, function (err, html) {
           let template = handlebars.compile(html);
           let replacements = {
             name: name,
-            link: currentUrl + `/api/users/${verToken.token}`,
-            url: currentUrl,
+            link: `http://${req.headers.host}/api/users/${verToken.token}`,
+            url: `http://${req.headers.host}.com`,
           };
 
           let htmlToSend = template(replacements);

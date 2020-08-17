@@ -22,28 +22,22 @@ const AuthState = (props) => {
   const initialState = {
     token: localStorage.getItem("token"),
     isAuthenticated: null,
-    loading: false,
+    loading: true,
     user: null,
     error: null,
     msg: [],
     verSuccess: null,
-    loaded: null,
     role: null,
     signUpSuccess: false,
   };
 
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  //Loading
-
-  const loadingSpinner = (value) => dispatch({ type: LOADING, payload: value });
-
   // Load User
   const loadUser = async () => {
     if (localStorage.token) {
       setAuthToken(localStorage.token);
     }
-
     try {
       const res = await axios.get("/api/auth");
       dispatch({ type: USER_LOADED, payload: res.data });
@@ -104,7 +98,7 @@ const AuthState = (props) => {
     } catch (err) {
       dispatch({
         type: LOGIN_FAIL,
-        payload: err.response.data.error,
+        payload: err.response.data,
       });
     }
   };
@@ -131,7 +125,6 @@ const AuthState = (props) => {
         clearErrors,
         loadUser,
         login,
-        loadingSpinner,
         emailVer,
         logout,
       }}

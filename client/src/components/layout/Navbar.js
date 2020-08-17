@@ -123,9 +123,11 @@ export default function Dashboard() {
   const authContext = useContext(AuthContext);
   const { isAuthenticated, loadUser } = authContext;
 
-  useEffect(() => {
-    //loadUser();
-  }, []);
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     loadUser();
+  //   }
+  // }, []);
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
@@ -200,13 +202,9 @@ export default function Dashboard() {
               <Paper className={fixedHeightPaper}>
                 <Switch>
                   <PrivateRoute exact path="/" component={Home} />
+                  <PrivateRoute path="/cash" component={Cash}></PrivateRoute>
                   <PrivateRoute
-                    exact
-                    path="/cash"
-                    component={Cash}
-                  ></PrivateRoute>
-                  <PrivateRoute
-                    exact
+                    eexact
                     path="/report"
                     component={Report}
                   ></PrivateRoute>

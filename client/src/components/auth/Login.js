@@ -12,7 +12,7 @@ import {
   Checkbox,
   FormControlLabel,
 } from "@material-ui/core/";
-import Loading from "../layout/Loading";
+
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -48,16 +48,7 @@ export default function SignIn(props) {
 
   const { setAlert } = alertContext;
 
-  const {
-    login,
-    error,
-    clearErrors,
-    isAuthenticated,
-    loaded,
-    loading,
-    loadUser,
-    loadingSpinner,
-  } = authContext;
+  const { login, error, clearErrors, isAuthenticated } = authContext;
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -108,7 +99,7 @@ export default function SignIn(props) {
         name,
         password,
       });
-      loadingSpinner(true);
+
       if (checked) {
         localStorage.name = name;
         localStorage.password = password;
@@ -125,75 +116,69 @@ export default function SignIn(props) {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      {loading === true ? (
-        <div className={classes.loading}>
-          <Loading />
-        </div>
-      ) : (
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-          <form className={classes.form} noValidate onSubmit={onSubmit}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              value={name}
-              label="Name"
-              name="name"
-              autoComplete="name"
-              autoFocus
-              onChange={onChange}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              value={password}
-              autoComplete="current-password"
-              onChange={onChange}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={checked}
-                  onChange={handleChange}
-                  name="checked"
-                />
-              }
-              label="Remember me"
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={forget}
-                  onChange={handleForget}
-                  name="checked"
-                />
-              }
-              label="Forget Credentials"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Sign In
-            </Button>
-          </form>
-        </div>
-      )}
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+        <form className={classes.form} noValidate onSubmit={onSubmit}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            value={name}
+            label="Name"
+            name="name"
+            autoComplete="name"
+            autoFocus
+            onChange={onChange}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            value={password}
+            autoComplete="current-password"
+            onChange={onChange}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={checked}
+                onChange={handleChange}
+                name="checked"
+              />
+            }
+            label="Remember me"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={forget}
+                onChange={handleForget}
+                name="checked"
+              />
+            }
+            label="Forget Credentials"
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Sign In
+          </Button>
+        </form>
+      </div>
     </Container>
   );
 }

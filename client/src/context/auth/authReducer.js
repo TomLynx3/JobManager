@@ -7,7 +7,6 @@ import {
   LOGIN_FAIL,
   LOGOUT,
   CLEAR_ERRORS,
-  LOADING,
   VERIFICATION_FAIL,
   VERIFICATION_SUCCESS,
 } from "../types";
@@ -22,6 +21,7 @@ export default (state, action) => {
         user: action.payload,
         loaded: true,
       };
+
     case REGISTER_SUCCESS:
       return {
         ...state,
@@ -70,12 +70,6 @@ export default (state, action) => {
         ...state,
         error: null,
         msg: [],
-      };
-
-    case LOADING:
-      return {
-        ...state,
-        loading: action.payload,
       };
 
     default:

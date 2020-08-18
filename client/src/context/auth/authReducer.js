@@ -45,9 +45,9 @@ export default (state, action) => {
         ...state,
         verSuccess: true,
         isAuthenticated: true,
-        msg: action.payload,
+        msg: action.payload.msg,
         loading: false,
-        error: action.payload.msg,
+        error: action.payload.error,
       };
     case VERIFICATION_FAIL:
     case REGISTER_FAIL:

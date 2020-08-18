@@ -76,7 +76,7 @@ const AuthState = (props) => {
 
       dispatch({ type: VERIFICATION_SUCCESS, payload: res.data });
     } catch (err) {
-      dispatch({ type: VERIFICATION_FAIL, payload: err.response.data.msg });
+      dispatch({ type: VERIFICATION_FAIL, payload: err.response.data });
     }
   };
   // Login User

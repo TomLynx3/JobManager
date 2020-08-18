@@ -130,7 +130,7 @@ router.get("/:token", async (req, res) => {
     if (!verificationToken) {
       return res
         .status(400)
-        .json({ msg: "Email address confirmation link is invalid" });
+        .json({ error: "Email address confirmation link is invalid" });
     }
     let user = await TempUser.findOne(verificationToken._userId);
     if (!user) {

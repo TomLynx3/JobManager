@@ -26,7 +26,7 @@ const Confirm = (props) => {
     emailVer(props.match.params);
 
     if (verSuccess === true) {
-      props.history.push("/");
+      props.history.push("/login");
       setAlert(msg, "success");
     }
 

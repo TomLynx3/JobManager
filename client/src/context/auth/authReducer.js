@@ -44,7 +44,6 @@ export default (state, action) => {
       return {
         ...state,
         verSuccess: true,
-        isAuthenticated: true,
         msg: action.payload.msg,
         loading: false,
         error: action.payload.error,

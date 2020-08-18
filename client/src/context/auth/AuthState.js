@@ -13,9 +13,9 @@ import {
   LOGIN_SUCCESS,
   LOGOUT,
   CLEAR_ERRORS,
-  LOADING,
   VERIFICATION_SUCCESS,
   VERIFICATION_FAIL,
+  CLEAN_SIGNUP_SUCCESS,
 } from "../types";
 
 const AuthState = (props) => {
@@ -108,6 +108,10 @@ const AuthState = (props) => {
   //Clear Errors
   const clearErrors = () => dispatch({ type: CLEAR_ERRORS });
 
+  //Clean SignUp Success
+
+  const cleanSignUpSuccess = () => dispatch({ type: CLEAN_SIGNUP_SUCCESS });
+
   return (
     <AuthContext.Provider
       value={{
@@ -127,6 +131,7 @@ const AuthState = (props) => {
         login,
         emailVer,
         logout,
+        cleanSignUpSuccess,
       }}
     >
       {props.children}

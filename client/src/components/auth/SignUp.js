@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
 import AuthContext from "../../context/auth/authContext";
 import AlertContext from "../../context/alert/alertContext";
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
+
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
 import {
   CssBaseline,
@@ -55,6 +57,8 @@ export default function SignUp(props) {
     msg,
   } = authContext;
 
+  const { promiseInProgress } = usePromiseTracker();
+
   useEffect(() => {
     if (signUpSuccess === true) {
       props.history.push("/login");
@@ -97,11 +101,13 @@ export default function SignUp(props) {
       setAlert("Passwords do not match", "error");
       clearErrors();
     } else {
-      register({
-        email,
-        name,
-        password,
-      });
+      trackPromise(
+        register({
+          email,
+          name,
+          password,
+        })
+      );
     }
   };
 
@@ -110,7 +116,7 @@ export default function SignUp(props) {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      {loading === true ? (
+      {promiseInProgress === true ? (
         <div className={classes.loading}>
           <Loading />
         </div>

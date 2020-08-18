@@ -212,7 +212,7 @@ export default function Dashboard() {
                   <PrivateRoute exact path="/logout" component={Logout} />
                   <Route exact path="/register" component={SignUp} />
                   <Route exact path="/login" component={Login} />
-                  <Route exact path="/api/users/:token" component={Confirm} />
+                  <Route exact path="/users/:token" component={Confirm} />
                 </Switch>
               </Paper>
             </Grid>

@@ -16,7 +16,7 @@ router.get("/", auth, async (req, res) => {
   let today = moment().format("dddd, MMMM DD YYYY");
 
   try {
-    const jobs = await Jobs.find({ date: today });
+    const jobs = await Jobs.find({ date: today, user: req.user.id });
     res.json(jobs);
   } catch (err) {
     console.error(err.message);
@@ -40,7 +40,7 @@ router.get("/week", auth, async (req, res) => {
     );
   }
   try {
-    const jobs = await Jobs.find({ date: { $in: days } });
+    const jobs = await Jobs.find({ date: { $in: days }, user: req.user.id });
     res.json(jobs);
   } catch (err) {
     console.error(err.message);
@@ -57,8 +57,8 @@ router.post("/filtred", auth, async (req, res) => {
 
   try {
     if (address !== "") {
-      const jobs = await Jobs.find();
-      const cashJobs = await JobsCash.find();
+      const jobs = await Jobs.find({ user: req.user.id });
+      const cashJobs = await JobsCash.find({ user: req.user.id });
       const jobFiltred = jobs.filter((job) => {
         const regex = new RegExp(address, "gi");
         return job.address.match(regex);
@@ -71,13 +71,22 @@ router.post("/filtred", auth, async (req, res) => {
       res.json({ cashFiltred: cashFiltred, jobFiltred: jobFiltred });
     }
     if (invoice !== "") {
-      const jobs = await Jobs.find({ invoice: { $in: invoice } });
+      const jobs = await Jobs.find({
+        invoice: { $in: invoice },
+        user: req.user.id,
+      });
       res.json({ cashFiltred: null, jobFiltred: jobs });
     }
     if (date !== "") {
       const dateFormat = moment(date).format("dddd, MMMM DD YYYY");
-      const jobs = await Jobs.find({ date: { $in: dateFormat } });
-      const cash = await JobsCash.find({ date: { $in: dateFormat } });
+      const jobs = await Jobs.find({
+        date: { $in: dateFormat },
+        user: req.user.id,
+      });
+      const cash = await JobsCash.find({
+        date: { $in: dateFormat },
+        user: req.user.id,
+      });
 
       res.json({ cashFiltred: cash, jobFiltred: jobs });
     }
@@ -106,7 +115,10 @@ router.post("/filtredweek", auth, async (req, res) => {
   }
 
   try {
-    const jobsFiltred = await Jobs.find({ date: { $in: days } });
+    const jobsFiltred = await Jobs.find({
+      date: { $in: days },
+      user: req.user.id,
+    });
     res.json(jobsFiltred);
   } catch (err) {
     console.error(err.message);
@@ -370,7 +382,10 @@ router.post("/getCash", auth, async (req, res) => {
   try {
     getDays(from, to);
 
-    let cashJobs = await JobsCash.find({ date: { $in: days } });
+    let cashJobs = await JobsCash.find({
+      date: { $in: days },
+      user: req.user.id,
+    });
 
     res.json(cashJobs);
   } catch (err) {
@@ -458,7 +473,7 @@ router.put("/cash/:id", auth, async (req, res) => {
 
 router.get("/unpaid", auth, async (req, res) => {
   try {
-    let job = await Jobs.find({ unpaid: true });
+    let job = await Jobs.find({ unpaid: true, user: req.user.id });
     res.json(job);
   } catch (err) {
     console.error(err.message);
@@ -512,7 +527,7 @@ router.get("/twoweeks", auth, async (req, res) => {
   }
 
   try {
-    let jobs = await Jobs.find({ date: { $in: days } });
+    let jobs = await Jobs.find({ date: { $in: days }, user: req.user.id });
     res.json(jobs);
   } catch (err) {
     console.error(err.message);
@@ -571,16 +586,18 @@ router.post("/calendar/statement/", auth, async (req, res) => {
 
   try {
     getDays(from, to);
-    let unpaid = await Jobs.find({ unpaid: true });
-    let period = await Jobs.find({ date: { $in: days } });
-    let cash = await JobsCash.find({ date: { $in: days } });
+    let unpaid = await Jobs.find({ unpaid: true, user: req.user.id });
+    let period = await Jobs.find({ date: { $in: days }, user: req.user.id });
+    let cash = await JobsCash.find({ date: { $in: days }, user: req.user.id });
     let material = await Material.find({
       date: { $in: days },
       type: { $in: "Material" },
+      user: req.user.id,
     });
     let gas = await Material.find({
       date: { $in: days },
       type: { $in: "Gas" },
+      user: req.user.id,
     });
 
     const unpaidAmount = amountMap(unpaid, "amount");
@@ -595,13 +612,15 @@ router.post("/calendar/statement/", auth, async (req, res) => {
       materialAmount + materialJobs + materialCashJobs
     );
 
+    const earned = periodAmount / 2 - materialAmount;
+
     const statement = new Object({
       unpaidSum: Number(unpaidAmount) / 2,
       periodSum: Number(periodAmount) / 2,
       cash: cashAmount,
       taxes: Number(periodAmount) * 0.13,
       material: materialTotal,
-      earned: Number(periodAmount - materialAmount) / 2,
+      earned: Number(earned),
       totalMaterial: Number(gasAmount + materialTotal),
       gas: Number(gasAmount),
     });
@@ -617,7 +636,7 @@ router.post("/calendar/statement/", auth, async (req, res) => {
   //@access   Private
   router.post("/sendfile", auth, async (req, res) => {
     try {
-      let unpaid = await Jobs.find({ unpaid: true });
+      let unpaid = await Jobs.find({ unpaid: true, user: req.user.id });
       const file = req.files.file;
       let jobFiltred = [];
       const extension = path.extname(file.name);

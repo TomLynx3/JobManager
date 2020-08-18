@@ -9,6 +9,7 @@ import {
   CLEAR_ERRORS,
   VERIFICATION_FAIL,
   VERIFICATION_SUCCESS,
+  CLEAN_SIGNUP_SUCCESS,
 } from "../types";
 
 export default (state, action) => {
@@ -83,7 +84,11 @@ export default (state, action) => {
         error: null,
         msg: [],
       };
-
+    case CLEAN_SIGNUP_SUCCESS:
+      return {
+        ...state,
+        signUpSuccess: false,
+      };
     default:
       return state;
   }

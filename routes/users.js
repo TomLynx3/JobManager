@@ -85,7 +85,7 @@ router.post(
           let template = handlebars.compile(html);
           let replacements = {
             name: name,
-            link: `http://${req.headers.host}/api/users/${verToken.token}`,
+            link: `http://${req.headers.host}/users/${verToken.token}`,
             url: `http://${req.headers.host}.com`,
           };
 

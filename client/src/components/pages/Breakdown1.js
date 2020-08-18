@@ -7,6 +7,7 @@ import Loading from "../layout/Loading";
 import { makeStyles } from "@material-ui/core/styles";
 import Icon from "@material-ui/core/Icon";
 import { Typography, Grid, Card } from "@material-ui/core/";
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import Weeks from "../reports/Weeks";
 
 import moment from "moment";
@@ -47,10 +48,12 @@ const Breakdown = () => {
 
   const classes = useStyles();
 
+  const { promiseInProgress } = usePromiseTracker();
+
   useEffect(() => {
     authContext.loadUser();
     clearFilter();
-    getJobsWeek();
+    trackPromise(getJobsWeek());
     setDate(days);
     if (msg && msg.length > 0) {
       setAlert(msg, "success");
@@ -113,7 +116,7 @@ const Breakdown = () => {
         <Icon className="fas fa-dollar-sign" />
       </Typography>
 
-      {loading === true ? (
+      {promiseInProgress === true ? (
         <Loading />
       ) : (
         <Grid container direction="row" spacing={3} className={classes.grid}>

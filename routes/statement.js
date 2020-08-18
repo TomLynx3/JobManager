@@ -22,6 +22,7 @@ router.post("/cash", auth, async (req, res) => {
       date: moment(date).format("dddd, MMMM DD YYYY"),
       amount,
       description,
+      user: req.user.id,
     });
     const log = await newLog.save();
     res.json({ msg: "Cash Balance was succesfully edited", log });
@@ -37,7 +38,7 @@ router.post("/cash", auth, async (req, res) => {
 //@access   Private
 router.get("/cash/logs", auth, async (req, res) => {
   try {
-    let logs = await LogsCash.find(null, null, {
+    let logs = await LogsCash.find({ user: req.user.id }, null, {
       limit: 10,
     });
     res.json(logs);
@@ -57,6 +58,9 @@ router.delete("/cash/logs/:id", auth, async (req, res) => {
     let log = await LogsCash.findById(req.params.id);
 
     if (!log) return res.status(404).json({ msg: "Log Not Found" });
+    if (log.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: "Not Authorized" });
+    }
 
     await LogsCash.findByIdAndRemove(req.params.id);
     res.json({ msg: "Log deleted", _id: req.params.id });
@@ -71,8 +75,8 @@ router.delete("/cash/logs/:id", auth, async (req, res) => {
 //@access   Private
 router.get("/cash", auth, async (req, res) => {
   try {
-    const jobs = await JobsCash.find();
-    const logs = await LogsCash.find();
+    const jobs = await JobsCash.find({ user: req.user.id });
+    const logs = await LogsCash.find({ user: req.user.id });
     const jobs_total = jobs.reduce(function (acc, obj) {
       return acc + obj.total_earned;
     }, 0);
@@ -155,7 +159,10 @@ router.post("/getmaterial", auth, async (req, res) => {
   try {
     getDays(from, to);
 
-    let material = await Material.find({ date: { $in: days } });
+    let material = await Material.find({
+      date: { $in: days },
+      user: req.user.id,
+    });
 
     res.json(material);
   } catch (err) {

@@ -2,6 +2,8 @@ import React, { useState, useContext, useEffect } from "react";
 import AuthContext from "../../context/auth/authContext";
 import AlertContext from "../../context/alert/alertContext";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import Loading from "../layout/Loading";
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import {
   CssBaseline,
   TextField,
@@ -48,9 +50,18 @@ export default function SignIn(props) {
 
   const { setAlert } = alertContext;
 
-  const { login, error, clearErrors, isAuthenticated } = authContext;
+  const {
+    login,
+    error,
+    clearErrors,
+    isAuthenticated,
+    cleanSignUpSuccess,
+  } = authContext;
+
+  const { promiseInProgress } = usePromiseTracker();
 
   useEffect(() => {
+    cleanSignUpSuccess();
     if (isAuthenticated) {
       props.history.push("/");
     }
@@ -96,10 +107,12 @@ export default function SignIn(props) {
     if (name === "" || password === "") {
       setAlert("Please fill in all fields", "error");
     } else {
-      login({
-        name,
-        password,
-      });
+      trackPromise(
+        login({
+          name,
+          password,
+        })
+      );
 
       if (checked) {
         localStorage.name = name;
@@ -117,69 +130,75 @@ export default function SignIn(props) {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign in
-        </Typography>
-        <form className={classes.form} noValidate onSubmit={onSubmit}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            value={name}
-            label="Name"
-            name="name"
-            autoComplete="name"
-            autoFocus
-            onChange={onChange}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            value={password}
-            autoComplete="current-password"
-            onChange={onChange}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={checked}
-                onChange={handleChange}
-                name="checked"
-              />
-            }
-            label="Remember me"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={forget}
-                onChange={handleForget}
-                name="checked"
-              />
-            }
-            label="Forget Credentials"
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Sign In
-          </Button>
-        </form>
-      </div>
+      {promiseInProgress === true ? (
+        <div className={classes.loading}>
+          <Loading />
+        </div>
+      ) : (
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign in
+          </Typography>
+          <form className={classes.form} noValidate onSubmit={onSubmit}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              value={name}
+              label="Name"
+              name="name"
+              autoComplete="name"
+              autoFocus
+              onChange={onChange}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              value={password}
+              autoComplete="current-password"
+              onChange={onChange}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={checked}
+                  onChange={handleChange}
+                  name="checked"
+                />
+              }
+              label="Remember me"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={forget}
+                  onChange={handleForget}
+                  name="checked"
+                />
+              }
+              label="Forget Credentials"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Sign In
+            </Button>
+          </form>
+        </div>
+      )}
     </Container>
   );
 }

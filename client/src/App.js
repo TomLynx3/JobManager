@@ -5,7 +5,6 @@ import "./App.css";
 import JobState from "./context/jobs/JobState";
 import StatementState from "./context/statement/StatementState";
 import AuthState from "./context/auth/AuthState";
-import AlertState from "./context/alert/AlertState";
 import setAuthToken from "./utils/setAuthToken";
 
 if (localStorage.token) {

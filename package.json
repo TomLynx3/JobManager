@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Job Manager App",
   "main": "server.js",
+  "engines": {
+    "node": "12.18.0"
+  },
   "scripts": {
     "start": "node server.js",
     "server": "nodemon server.js",

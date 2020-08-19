@@ -54,13 +54,9 @@ const LogItem = ({ logs }) => {
 
   const statementContext = useContext(StatementContext);
 
-  const { deleteLog, deleteCashLog } = statementContext;
+  const { deleteCashLog } = statementContext;
   const onDelete = () => {
-    if (statementContext.logs.length <= 0) {
-      deleteCashLog(logs._id);
-    } else {
-      deleteLog(logs._id);
-    }
+    deleteCashLog(logs._id);
   };
   return (
     <Card className={classes.card}>

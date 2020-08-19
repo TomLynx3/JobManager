@@ -9,8 +9,6 @@ import AddCircleIcon from "@material-ui/icons/AddCircle";
 import CashLog from "../cash/CashLog";
 import { Grid, Modal, Backdrop, Fade, Button } from "@material-ui/core/";
 import StatementContext from "../../context/statement/statementContext";
-import JobContext from "../../context/jobs/jobContext";
-import AlertContext from "../../context/alert/alertContext";
 import AuthContext from "../../context/auth/authContext";
 
 const Cash = () => {
@@ -29,12 +27,9 @@ const Cash = () => {
   const classes = useStyles();
 
   const authContext = useContext(AuthContext);
-  const alertContext = useContext(AlertContext);
-  const statementContext = useContext(StatementContext);
-  const jobContext = useContext(JobContext);
 
-  const { setAlert } = alertContext;
-  const { msg, error, clearAlerts } = jobContext;
+  const statementContext = useContext(StatementContext);
+
   const { clearLogs } = statementContext;
 
   const [toogle, setToogle] = useState({
@@ -59,34 +54,12 @@ const Cash = () => {
     }
   };
 
-  useEffect(
-    () => {
-      authContext.loadUser();
-      clearLogs();
+  useEffect(() => {
+    authContext.loadUser();
+    clearLogs();
 
-      if (msg && msg.length > 0) {
-        setAlert(msg, "success");
-        clearAlerts();
-      }
-      if (error && error.length > 0) {
-        setAlert(error, "error");
-        clearAlerts();
-      }
-      if (statementContext.msg && statementContext.msg.length > 0) {
-        setAlert(statementContext.msg, "success");
-        statementContext.clearAlerts();
-      }
-
-      if (statementContext.error && statementContext.error.length > 0) {
-        setAlert(statementContext.error, "error");
-        statementContext.clearAlerts();
-      }
-
-      //eslint-disable-next-line
-    },
-    [msg, error, statementContext.msg],
-    statementContext.error
-  );
+    //eslint-disable-next-line
+  }, []);
 
   return (
     <Grid container direction="row" spacing={4}>

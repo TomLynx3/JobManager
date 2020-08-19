@@ -4,6 +4,7 @@ import MaterialItem from "./MaterialItem";
 import Loading from "../layout/Loading";
 import ErrorIcon from "@material-ui/icons/Error";
 import { makeStyles } from "@material-ui/core/styles";
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import { Grid, Paper, Icon, Typography } from "@material-ui/core/";
 
 const MaterialLogs = ({ period }) => {
@@ -24,20 +25,22 @@ const MaterialLogs = ({ period }) => {
   const classes = useStyles();
   const statementContext = useContext(StatementContext);
 
-  const { material, loading, getMaterial } = statementContext;
+  const { promiseInProgress } = usePromiseTracker();
+
+  const { material, getMaterial } = statementContext;
 
   useEffect(() => {
     if (period === undefined) {
-      getMaterial();
+      trackPromise(getMaterial());
     } else {
-      getMaterial(period);
+      trackPromise(getMaterial(period));
     }
 
     //eslint-disable-next-line
   }, [period]);
 
   const materialRender = () => {
-    if (!loading && material.length > 0) {
+    if (!promiseInProgress && material.length > 0) {
       return (
         <Grid container direction="row" spacing={4}>
           {material.map((material, index) => (
@@ -47,7 +50,7 @@ const MaterialLogs = ({ period }) => {
           ))}
         </Grid>
       );
-    } else if (loading) {
+    } else if (promiseInProgress) {
       return (
         <Grid item md={12} xs={12} sm={12}>
           <Loading />

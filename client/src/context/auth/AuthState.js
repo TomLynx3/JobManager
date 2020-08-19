@@ -2,7 +2,10 @@ import React, { useReducer } from "react";
 import axios from "axios";
 import AuthContext from "./authContext";
 import authReducer from "./authReducer";
+
 import setAuthToken from "../../utils/setAuthToken";
+
+import { NotificationManager } from "react-notifications";
 
 import {
   REGISTER_SUCCESS,
@@ -12,7 +15,6 @@ import {
   LOGIN_FAIL,
   LOGIN_SUCCESS,
   LOGOUT,
-  CLEAR_ERRORS,
   VERIFICATION_SUCCESS,
   VERIFICATION_FAIL,
   CLEAN_SIGNUP_SUCCESS,
@@ -22,12 +24,10 @@ const AuthState = (props) => {
   const initialState = {
     token: localStorage.getItem("token"),
     isAuthenticated: null,
-    loading: true,
     user: null,
     error: null,
     msg: [],
     verSuccess: null,
-    role: null,
     signUpSuccess: false,
   };
 
@@ -43,6 +43,7 @@ const AuthState = (props) => {
       dispatch({ type: USER_LOADED, payload: res.data });
     } catch (err) {
       dispatch({ type: AUTH_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -60,11 +61,12 @@ const AuthState = (props) => {
         type: REGISTER_SUCCESS,
         payload: res.data,
       });
+      NotificationManager.success(res.data.msg, "Successful!", 2500);
     } catch (err) {
       dispatch({
         type: REGISTER_FAIL,
-        payload: err.response.data.msg,
       });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -75,8 +77,10 @@ const AuthState = (props) => {
       const res = await axios.get(`/api/users/${token.token}`);
 
       dispatch({ type: VERIFICATION_SUCCESS, payload: res.data });
+      NotificationManager.success(res.data.msg, "Successful!", 2500);
     } catch (err) {
-      dispatch({ type: VERIFICATION_FAIL, payload: err.response.data });
+      dispatch({ type: VERIFICATION_FAIL });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
   // Login User
@@ -94,19 +98,17 @@ const AuthState = (props) => {
         type: LOGIN_SUCCESS,
         payload: res.data,
       });
+      NotificationManager.success(res.data.msg, "Successful!", 2500);
       loadUser();
     } catch (err) {
       dispatch({
         type: LOGIN_FAIL,
-        payload: err.response.data.error,
       });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
   //Logout
   const logout = () => dispatch({ type: LOGOUT });
-
-  //Clear Errors
-  const clearErrors = () => dispatch({ type: CLEAR_ERRORS });
 
   //Clean SignUp Success
 
@@ -117,16 +119,11 @@ const AuthState = (props) => {
       value={{
         token: state.token,
         isAuthenticated: state.isAuthenticated,
-        loading: state.loading,
         user: state.user,
-        error: state.error,
-        loaded: state.loaded,
-        role: state.role,
         msg: state.msg,
         signUpSuccess: state.signUpSuccess,
         verSuccess: state.verSuccess,
         register,
-        clearErrors,
         loadUser,
         login,
         emailVer,

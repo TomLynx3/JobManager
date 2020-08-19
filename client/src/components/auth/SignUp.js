@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import AuthContext from "../../context/auth/authContext";
-import AlertContext from "../../context/alert/alertContext";
+import { NotificationManager } from "react-notifications";
 import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
@@ -44,18 +44,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUp(props) {
   const authContext = useContext(AuthContext);
-  const alertContext = useContext(AlertContext);
 
-  const { setAlert } = alertContext;
-
-  const {
-    error,
-    clearErrors,
-    loading,
-    signUpSuccess,
-    register,
-    msg,
-  } = authContext;
+  const { signUpSuccess, register } = authContext;
 
   const { promiseInProgress } = usePromiseTracker();
 
@@ -64,15 +54,8 @@ export default function SignUp(props) {
       props.history.push("/login");
     }
 
-    if (msg && msg.length > 0) {
-      setAlert(msg, "success");
-      clearErrors();
-    }
-    if (error && error.length > 0) {
-      setAlert(error, "error");
-      clearErrors();
-    }
-  }, [msg, error, props.history]);
+    //eslint-disable-next-line
+  }, []);
   const [user, setUser] = useState({
     email: "",
     name: "",
@@ -92,14 +75,15 @@ export default function SignUp(props) {
   const onSubmit = (e) => {
     e.preventDefault();
     if (email === "" || name === "") {
-      setAlert("Please fill in all fields", "error");
-      clearErrors();
+      NotificationManager.error("Please fill all fields", "Error!", 2500);
     } else if (password.length < 6) {
-      setAlert("Password must be at least 6 characters", "error");
-      clearErrors();
+      NotificationManager.error(
+        "Password must be at least 6 characters",
+        "Error!",
+        2500
+      );
     } else if (password !== password2) {
-      setAlert("Passwords do not match", "error");
-      clearErrors();
+      NotificationManager.error("Passwords do not match", "Error!", 2500);
     } else {
       trackPromise(
         register({

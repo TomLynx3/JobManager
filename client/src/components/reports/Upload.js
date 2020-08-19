@@ -4,14 +4,11 @@ import { Grid, Typography, Fab, CardContent, Button } from "@material-ui/core";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import SendIcon from "@material-ui/icons/Send";
 import { makeStyles } from "@material-ui/core/styles";
-import AlertContext from "../../context/alert/alertContext";
+import { NotificationManager } from "react-notifications";
 import JobContext from "../../context/jobs/jobContext";
 
 const Upload = () => {
   const jobContext = useContext(JobContext);
-  const alertContext = useContext(AlertContext);
-
-  const { setAlert } = alertContext;
 
   const { sendFile } = jobContext;
 
@@ -29,7 +26,7 @@ const Upload = () => {
       sendFile(file);
       setFile({ file: null });
     } else {
-      setAlert("Please Upload The File", "error");
+      NotificationManager.error("Please Upload The File", "Error!", 2500);
     }
   };
 

@@ -4,6 +4,7 @@ import LogItem from "../statementComp/LogItem";
 import Loading from "../layout/Loading";
 import ErrorIcon from "@material-ui/icons/Error";
 import { makeStyles } from "@material-ui/core/styles";
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import { Grid, Paper, Icon, Typography } from "@material-ui/core/";
 
 const CashLog = () => {
@@ -24,16 +25,18 @@ const CashLog = () => {
   const classes = useStyles();
 
   const statementContext = useContext(StatementContext);
-  const { getCashLogs, cashLogs, loading } = statementContext;
+  const { getCashLogs, cashLogs } = statementContext;
+
+  const { promiseInProgress } = usePromiseTracker();
 
   useEffect(() => {
-    getCashLogs();
+    trackPromise(getCashLogs());
 
     //eslint-disable-next-line
   }, []);
 
   const cashLogRender = () => {
-    if (!loading && cashLogs.length > 0) {
+    if (!promiseInProgress && cashLogs.length > 0) {
       return (
         <Grid container direction="row" spacing={4}>
           {cashLogs.map((log, index) => (
@@ -43,7 +46,7 @@ const CashLog = () => {
           ))}
         </Grid>
       );
-    } else if (loading) {
+    } else if (promiseInProgress) {
       return (
         <Grid item md={12} xs={12} sm={12}>
           <Loading />

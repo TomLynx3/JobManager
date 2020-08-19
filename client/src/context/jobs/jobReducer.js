@@ -22,7 +22,6 @@ import {
   GET_CALENDAR_STATEMENT,
   SEND_FILE,
   UNPAID_UPDATE,
-  CLEAR_ALERTS,
   CLEAR_CASH_FILTER_ITEM,
   FILE_SEND_ERROR,
 } from "../types";
@@ -35,47 +34,38 @@ export default (state, action) => {
       return {
         ...state,
         jobs: action.payload,
-        loading: false,
       };
     case SEND_FILE:
       return {
         ...state,
-        msg: action.payload.msg,
         jobs: action.payload.jobs,
-        loading: false,
       };
     case GET_CALENDAR_STATEMENT:
       return {
         ...state,
         calendarStatement: action.payload,
-        loading: false,
-        loaded: true,
       };
     case GET_UNPAID_JOBS:
       return {
         ...state,
         jobs: action.payload,
-        loading: false,
       };
 
     case GET_JOBS_CASH:
       return {
         ...state,
         jobsCash: action.payload,
-        loading: false,
       };
     case ADD_JOB:
       return {
         ...state,
         jobs: [...state.jobs, action.payload.job],
-        loading: false,
         msg: action.payload.msg,
       };
     case ADD_JOB_CASH:
       return {
         ...state,
         jobsCash: [...state.jobsCash, action.payload.jobCash],
-        loading: false,
         msg: action.payload.msg,
       };
     case DELETE_JOB:
@@ -83,7 +73,6 @@ export default (state, action) => {
         ...state,
         jobs: state.jobs.filter((job) => job._id !== action.payload._id),
         msg: action.payload.msg,
-        loading: false,
       };
     case DELETE_JOB_CASH:
       return {
@@ -91,7 +80,6 @@ export default (state, action) => {
         jobsCash: state.jobsCash.filter(
           (job) => job._id !== action.payload._id
         ),
-        loading: false,
         msg: action.payload.msg,
       };
     case CLEAR_JOBS:
@@ -100,7 +88,6 @@ export default (state, action) => {
         jobs: [],
         current: null,
         filtred: null,
-        error: null,
       };
     case CLEAR_CASH:
       return {
@@ -121,13 +108,11 @@ export default (state, action) => {
       return {
         ...state,
         filtred: state.jobs.filter((job) => job._id !== action.payload),
-        loading: false,
       };
     case CLEAR_CASH_FILTER_ITEM:
       return {
         ...state,
         cashFiltred: state.jobsCash.filter((job) => job._id !== action.payload),
-        loading: false,
       };
     case UPDATE_JOB:
       return {
@@ -135,7 +120,6 @@ export default (state, action) => {
         jobs: state.jobs.map((job) =>
           job._id === action.payload.job._id ? action.payload.job : job
         ),
-        loading: false,
         msg: action.payload.msg,
       };
     case UPDATE_CASH_JOB:
@@ -144,7 +128,6 @@ export default (state, action) => {
         jobsCash: state.jobsCash.map((job) =>
           job._id === action.payload.job._id ? action.payload.job : job
         ),
-        loading: false,
         msg: action.payload.msg,
       };
     case UNPAID_UPDATE:
@@ -154,20 +137,17 @@ export default (state, action) => {
           job.unpaid === action.payload.job.unpaid ? action.payload.job : job
         ),
         msg: action.payload.msg,
-        loading: false,
       };
     case FILTER_JOB:
       return {
         ...state,
         filtred: action.payload.jobFiltred,
         cashFiltred: action.payload.cashFiltred,
-        loading: false,
       };
     case FILTER_WEEK:
       return {
         ...state,
         filtred: action.payload,
-        loading: false,
       };
 
     case CLEAR_FILTER:
@@ -178,18 +158,10 @@ export default (state, action) => {
     case JOB_ERROR:
       return {
         ...state,
-        error: action.payload,
       };
     case FILE_SEND_ERROR:
       return {
         ...state,
-        error: action.payload.msg,
-      };
-    case CLEAR_ALERTS:
-      return {
-        ...state,
-        msg: [],
-        error: [],
       };
 
     default:

@@ -1,6 +1,6 @@
 import React, { useReducer } from "react";
 import axios from "axios";
-
+import { NotificationManager } from "react-notifications";
 import JobContext from "./jobContext";
 import jobReducer from "./jobReducer";
 
@@ -28,7 +28,6 @@ import {
   GET_CALENDAR_STATEMENT,
   SEND_FILE,
   UNPAID_UPDATE,
-  CLEAR_ALERTS,
   CLEAR_CASH_FILTER_ITEM,
   FILE_SEND_ERROR,
 } from "../types";
@@ -42,7 +41,6 @@ const JobState = (props) => {
     error: null,
     msg: null,
     jobsCash: [],
-    loading: true,
     calendarStatement: null,
     file: null,
   };
@@ -57,7 +55,8 @@ const JobState = (props) => {
 
       dispatch({ type: GET_JOBS, payload: res.data });
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response.msg });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -75,7 +74,8 @@ const JobState = (props) => {
 
       dispatch({ type: GET_JOBS_CASH, payload: res.data });
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response.msg });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -86,7 +86,8 @@ const JobState = (props) => {
 
       dispatch({ type: GET_JOBS_WEEK, payload: res.data });
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response.msg });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
   //Send file
@@ -98,8 +99,10 @@ const JobState = (props) => {
     try {
       const res = await axios.post("/api/jobs/sendfile", formData);
       dispatch({ type: SEND_FILE, payload: res.data });
+      NotificationManager.success(res.data.msg, "Success!", 2500);
     } catch (err) {
-      dispatch({ type: FILE_SEND_ERROR, payload: err.response.data });
+      dispatch({ type: FILE_SEND_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -114,8 +117,10 @@ const JobState = (props) => {
       const res = await axios.post("/api/jobs", job, config);
 
       dispatch({ type: ADD_JOB, payload: res.data });
+      NotificationManager.success(res.data.msg, "Success!", 2500);
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response.msg });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
   //Delete Job
@@ -124,8 +129,10 @@ const JobState = (props) => {
       const res = await axios.delete(`/api/jobs/${_id}`);
 
       dispatch({ type: DELETE_JOB, payload: res.data });
+      NotificationManager.success(res.data.msg, "Success!", 2500);
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response.msg });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
   //Update Job
@@ -139,8 +146,10 @@ const JobState = (props) => {
       const res = await axios.put(`/api/jobs/${job._id}`, job, config);
 
       dispatch({ type: UPDATE_JOB, payload: res.data });
+      NotificationManager.success(res.data.msg, "Success!", 2500);
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response.msg });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -171,7 +180,8 @@ const JobState = (props) => {
 
       dispatch({ type: FILTER_JOB, payload: res.data });
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response.msg });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
   //fILTER JOBS by WEEK
@@ -186,7 +196,8 @@ const JobState = (props) => {
 
       dispatch({ type: FILTER_WEEK, payload: res.data });
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response.msg });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
   //clear filter
@@ -207,8 +218,10 @@ const JobState = (props) => {
       const res = await axios.delete(`/api/jobs/cash/${_id}`);
 
       dispatch({ type: DELETE_JOB_CASH, payload: res.data });
+      NotificationManager.success(res.data.msg, "Success!", 2500);
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response.msg });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -224,8 +237,10 @@ const JobState = (props) => {
       const res = await axios.post("/api/jobs/cash", job, config);
 
       dispatch({ type: ADD_JOB_CASH, payload: res.data });
+      NotificationManager.success(res.data.msg, "Success!", 2500);
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response.msg });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -241,8 +256,10 @@ const JobState = (props) => {
       const res = await axios.put(`/api/jobs/cash/${job._id}`, job, config);
 
       dispatch({ type: UPDATE_CASH_JOB, payload: res.data });
+      NotificationManager.success(res.data.msg, "Success!", 2500);
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response.msg });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -252,8 +269,10 @@ const JobState = (props) => {
       const res = await axios.put(`/api/jobs/unpaid/${_id}`);
 
       dispatch({ type: UNPAID_UPDATE, payload: res.data });
+      NotificationManager.success(res.data.msg, "Success!", 2500);
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -267,7 +286,8 @@ const JobState = (props) => {
 
       dispatch({ type: GET_UNPAID_JOBS, payload: res.data });
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response.msg });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -277,7 +297,8 @@ const JobState = (props) => {
 
       dispatch({ type: GET_TWO_WEEKS, payload: res.data });
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response.msg });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -296,12 +317,9 @@ const JobState = (props) => {
 
       dispatch({ type: GET_CALENDAR_STATEMENT, payload: res.data });
     } catch (err) {
-      dispatch({ type: JOB_ERROR, payload: err.response.msg });
+      dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
-  };
-
-  const clearAlerts = () => {
-    dispatch({ type: CLEAR_ALERTS });
   };
 
   return (
@@ -311,9 +329,7 @@ const JobState = (props) => {
         current: state.current,
         filtred: state.filtred,
         cashFiltred: state.cashFiltred,
-        error: state.error,
         jobsCash: state.jobsCash,
-        loading: state.loading,
         msg: state.msg,
         calendarStatement: state.calendarStatement,
         file: state.file,
@@ -337,7 +353,6 @@ const JobState = (props) => {
         deleteJob,
         getCalendarStatement,
         clearJobs,
-        clearAlerts,
         sendFile,
         updateUnpaid,
         clearCashFilterItem,

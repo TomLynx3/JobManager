@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, Fragment } from "react";
 import JobContext from "../../context/jobs/jobContext";
 import { makeStyles } from "@material-ui/core/styles";
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import {
   TextField,
   InputAdornment,
@@ -13,6 +14,7 @@ import MessageIcon from "@material-ui/icons/Message";
 import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 import SaveIcon from "@material-ui/icons/Save";
 import EditIcon from "@material-ui/icons/Edit";
+import Loading from "../layout/Loading";
 import moment from "moment";
 
 const CashForm = ({ component, handleCloseForm }) => {
@@ -46,6 +48,8 @@ const CashForm = ({ component, handleCloseForm }) => {
 
   const today = moment().format("YYYY-MM-DD");
 
+  const { promiseInProgress } = usePromiseTracker();
+
   const { addJobCash, current, clearCurrent, updateCashJob } = jobContext;
   useEffect(() => {
     if (current !== null) {
@@ -75,9 +79,9 @@ const CashForm = ({ component, handleCloseForm }) => {
   const onSubmit = (e) => {
     e.preventDefault();
     if (current === null) {
-      addJobCash(job);
+      trackPromise(addJobCash(job));
     } else {
-      updateCashJob(job);
+      trackPromise(updateCashJob(job));
       handleCloseForm();
       clearCurrent();
     }
@@ -91,121 +95,124 @@ const CashForm = ({ component, handleCloseForm }) => {
     });
   };
 
-  const clearAll = () => {
-    clearCurrent();
-  };
   return (
-    <Container
-      component="main"
-      maxWidth="xs"
-      className={component == "Modal" ? classes.modalForm : classes.form}
-    >
-      <Typography className={classes.heading} align="center">
-        {component == "Modal" ? "Edit Cash Job" : "Add a Cash Job"}
-      </Typography>
+    <Fragment>
+      {promiseInProgress === true ? (
+        <Loading />
+      ) : (
+        <Container
+          component="main"
+          maxWidth="xs"
+          className={component === "Modal" ? classes.modalForm : classes.form}
+        >
+          <Typography className={classes.heading} align="center">
+            {component === "Modal" ? "Edit Cash Job" : "Add a Cash Job"}
+          </Typography>
 
-      <form className={classes.form} onSubmit={onSubmit}>
-        <TextField
-          className={classes.input}
-          name="date"
-          variant="outlined"
-          type="date"
-          value={date}
-          onChange={onChange}
-        />
+          <form className={classes.form} onSubmit={onSubmit}>
+            <TextField
+              className={classes.input}
+              name="date"
+              variant="outlined"
+              type="date"
+              value={date}
+              onChange={onChange}
+            />
 
-        <TextField
-          className={classes.input}
-          placeholder="Address"
-          name="address"
-          type="text"
-          required
-          variant="outlined"
-          value={address}
-          onChange={onChange}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <HomeIcon></HomeIcon>
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          className={classes.input}
-          placeholder="Amount"
-          name="amount"
-          required
-          type="text"
-          variant="outlined"
-          value={amount}
-          onChange={onChange}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <AttachMoneyIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          className={classes.input}
-          placeholder="Material"
-          name="material"
-          type="text"
-          variant="outlined"
-          value={material}
-          onChange={onChange}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <AttachMoneyIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
+            <TextField
+              className={classes.input}
+              placeholder="Address"
+              name="address"
+              type="text"
+              required
+              variant="outlined"
+              value={address}
+              onChange={onChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <HomeIcon></HomeIcon>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              className={classes.input}
+              placeholder="Amount"
+              name="amount"
+              required
+              type="text"
+              variant="outlined"
+              value={amount}
+              onChange={onChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <AttachMoneyIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              className={classes.input}
+              placeholder="Material"
+              name="material"
+              type="text"
+              variant="outlined"
+              value={material}
+              onChange={onChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <AttachMoneyIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
 
-        <TextField
-          className={classes.input}
-          placeholder="Description"
-          name="description"
-          type="text"
-          variant="outlined"
-          multiline={true}
-          rows={3}
-          value={description}
-          onChange={onChange}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <MessageIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-        {current ? (
-          <Button
-            className={classes.btn}
-            type="submit"
-            variant="contained"
-            color="primary"
-            startIcon={<EditIcon />}
-          >
-            Edit Cash Job
-          </Button>
-        ) : (
-          <Button
-            className={classes.btn}
-            type="submit"
-            variant="contained"
-            color="primary"
-            startIcon={<SaveIcon />}
-          >
-            Save a Cash Job{" "}
-          </Button>
-        )}
-      </form>
-    </Container>
+            <TextField
+              className={classes.input}
+              placeholder="Description"
+              name="description"
+              type="text"
+              variant="outlined"
+              multiline={true}
+              rows={3}
+              value={description}
+              onChange={onChange}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <MessageIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            {current ? (
+              <Button
+                className={classes.btn}
+                type="submit"
+                variant="contained"
+                color="primary"
+                startIcon={<EditIcon />}
+              >
+                Edit Cash Job
+              </Button>
+            ) : (
+              <Button
+                className={classes.btn}
+                type="submit"
+                variant="contained"
+                color="primary"
+                startIcon={<SaveIcon />}
+              >
+                Save a Cash Job{" "}
+              </Button>
+            )}
+          </form>
+        </Container>
+      )}
+    </Fragment>
   );
 };
 

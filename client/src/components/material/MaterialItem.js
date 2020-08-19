@@ -84,7 +84,7 @@ const MaterialItem = ({ material }) => {
             variant="outlined"
             size="small"
             label={material.type}
-            color={material.type == "Material" ? "secondary" : "primary"}
+            color={material.type === "Material" ? "secondary" : "primary"}
             onClick={onDelete}
           ></Chip>
           <Tooltip title="Delete">

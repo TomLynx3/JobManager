@@ -6,9 +6,9 @@ import ReportItem from "../reports/ReportItem";
 import ReportStatement from "../reports/ReportStatement";
 import Upload from "./Upload";
 import VisibilityIcon from "@material-ui/icons/Visibility";
-import AlertContext from "../../context/alert/alertContext";
 import ErrorIcon from "@material-ui/icons/Error";
 import { makeStyles } from "@material-ui/core/styles";
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import { Button, Grid, Paper, Icon, Typography } from "@material-ui/core";
 
 import TwoWeeks from "./TwoWeeks";
@@ -32,32 +32,16 @@ const Report = () => {
 
   const jobContext = useContext(JobContext);
   const authContext = useContext(AuthContext);
-  const alertContext = useContext(AlertContext);
-  const { setAlert } = alertContext;
-  const {
-    getUnpaidJobs,
-    getTwoWeeks,
-    jobs,
-    loading,
-    msg,
-    error,
-    clearAlerts,
-  } = jobContext;
+  const { getUnpaidJobs, getTwoWeeks, jobs, loading, msg } = jobContext;
+
+  const { promiseInProgress } = usePromiseTracker();
 
   useEffect(() => {
     authContext.loadUser();
-    getTwoWeeks();
-    if (msg && msg.length > 0) {
-      setAlert(msg, "success");
-      clearAlerts();
-    }
-    if (error && error.length > 0) {
-      setAlert(error, "error");
-      clearAlerts();
-    }
+    trackPromise(getTwoWeeks());
 
     //eslint-disable-next-line
-  }, [msg, error]);
+  }, [msg]);
 
   const allJobs = () => {
     getTwoWeeks();
@@ -76,7 +60,7 @@ const Report = () => {
           ))}
         </Grid>
       );
-    } else if (loading) {
+    } else if (promiseInProgress === true) {
       return <Loading />;
     } else {
       return (

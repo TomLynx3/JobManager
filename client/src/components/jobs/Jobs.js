@@ -4,13 +4,16 @@ import DayOfWeek from "./DayOfWeek";
 import Amount from "./Amount";
 import Today from "./Today";
 import Loading from "../layout/Loading";
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 
 import Grid from "@material-ui/core/Grid";
 
 const Jobs = () => {
   const jobContext = useContext(JobContext);
 
-  const { jobs, getJobs, filtred, loading } = jobContext;
+  const { jobs, getJobs, filtred } = jobContext;
+
+  const { promiseInProgress } = usePromiseTracker();
 
   const calcAmount = (jobs) => {
     const amount = jobs.reduce(function (acc, obj) {
@@ -21,7 +24,7 @@ const Jobs = () => {
   };
 
   useEffect(() => {
-    getJobs();
+    trackPromise(getJobs());
 
     //eslint-disable-next-line
   }, []);
@@ -33,7 +36,7 @@ const Jobs = () => {
           <Today></Today>
         </div>
       )}
-      {jobs !== null && !loading ? (
+      {jobs !== null && !promiseInProgress ? (
         <div>
           <DayOfWeek jobs={jobs}></DayOfWeek>
           <Amount amount={calcAmount(jobs)}></Amount>

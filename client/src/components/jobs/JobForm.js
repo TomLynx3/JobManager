@@ -7,7 +7,9 @@ import HomeIcon from "@material-ui/icons/Home";
 import MessageIcon from "@material-ui/icons/Message";
 import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 import SaveIcon from "@material-ui/icons/Save";
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import EditIcon from "@material-ui/icons/Edit";
+import Loading from "../layout/Loading";
 import moment from "moment";
 import {
   TextField,
@@ -25,6 +27,8 @@ const JobForm = ({ component, handleCloseForm }) => {
   const jobContext = useContext(JobContext);
 
   const { addJob, current, clearCurrent, updateJob } = jobContext;
+
+  const { promiseInProgress } = usePromiseTracker();
 
   const useStyles = makeStyles((theme) => ({
     heading: {
@@ -103,9 +107,9 @@ const JobForm = ({ component, handleCloseForm }) => {
   const onSubmit = (e) => {
     e.preventDefault();
     if (current === null) {
-      addJob(job);
+      trackPromise(addJob(job));
     } else {
-      updateJob(job);
+      trackPromise(updateJob(job));
       clearAll();
       handleCloseForm();
     }
@@ -136,194 +140,197 @@ const JobForm = ({ component, handleCloseForm }) => {
       <Typography className={classes.heading} align="center">
         {current ? "Edit Job" : "Add Job"}
       </Typography>
-
-      <form className={classes.form} onSubmit={onSubmit}>
-        <TextField
-          className={classes.input}
-          name="date"
-          variant="outlined"
-          type="date"
-          value={date}
-          onChange={onChange}
-          required
-        />
-        <TextField
-          className={classes.input}
-          placeholder="Invoice Number"
-          name="invoice"
-          type="text"
-          variant="outlined"
-          value={invoice}
-          onChange={onChange}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <ReceiptIcon></ReceiptIcon>
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          className={classes.input}
-          placeholder="Address"
-          name="address"
-          type="text"
-          required
-          variant="outlined"
-          value={address}
-          onChange={onChange}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <HomeIcon></HomeIcon>
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          className={classes.input}
-          placeholder="Amount"
-          name="amount"
-          required
-          type="text"
-          variant="outlined"
-          value={amount}
-          onChange={onChange}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <AttachMoneyIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <TextField
-          className={classes.input}
-          placeholder="Material"
-          name="material"
-          type="text"
-          variant="outlined"
-          value={material}
-          onChange={onChange}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <AttachMoneyIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        <FormLabel component="legend">Company</FormLabel>
-        <RadioGroup
-          row
-          aria-label="Company"
-          name="company"
-          value={company}
-          onChange={onChange}
-        >
-          <FormControlLabel
-            value="Express"
-            control={<Radio color="secondary" />}
-            label="Express Plumbing"
+      {promiseInProgress === true ? (
+        <Loading />
+      ) : (
+        <form className={classes.form} onSubmit={onSubmit}>
+          <TextField
+            className={classes.input}
+            name="date"
+            variant="outlined"
+            type="date"
+            value={date}
+            onChange={onChange}
+            required
           />
-          <FormControlLabel
-            value="Energy"
-            control={<Radio color="primary" />}
-            label="Energy Plumbing"
+          <TextField
+            className={classes.input}
+            placeholder="Invoice Number"
+            name="invoice"
+            type="text"
+            variant="outlined"
+            value={invoice}
+            onChange={onChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <ReceiptIcon></ReceiptIcon>
+                </InputAdornment>
+              ),
+            }}
           />
-        </RadioGroup>
-        <FormLabel component="legend">Work Type</FormLabel>
-        <RadioGroup
-          row
-          aria-label="Type"
-          name="type"
-          value={type}
-          onChange={onChange}
-        >
-          <FormControlLabel
-            value="Service"
-            control={<Radio color="secondary" />}
-            label="Service"
+          <TextField
+            className={classes.input}
+            placeholder="Address"
+            name="address"
+            type="text"
+            required
+            variant="outlined"
+            value={address}
+            onChange={onChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <HomeIcon></HomeIcon>
+                </InputAdornment>
+              ),
+            }}
           />
-          <FormControlLabel
-            value="Excavation"
-            control={<Radio color="primary" />}
-            label="Excavation"
+          <TextField
+            className={classes.input}
+            placeholder="Amount"
+            name="amount"
+            required
+            type="text"
+            variant="outlined"
+            value={amount}
+            onChange={onChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <AttachMoneyIcon />
+                </InputAdornment>
+              ),
+            }}
           />
-        </RadioGroup>
-        {type === "Excavation" ? (
-          <Fade in={type === "Excavation"} timeout={1500}>
-            <div>
-              <FormLabel component="legend">Commission Amount</FormLabel>
-              <RadioGroup
-                row
-                aria-label="Percentage"
-                name="percentage"
-                value={percentage}
-                onChange={onChange}
-              >
-                <FormControlLabel
-                  value="10"
-                  control={<Radio color="primary" />}
-                  label="10%"
-                />
-                <FormControlLabel
-                  value="35"
-                  control={<Radio color="primary" />}
-                  label="35%"
-                />
-                <FormControlLabel
-                  value="45"
-                  control={<Radio color="primary" />}
-                  label="45%"
-                />
-              </RadioGroup>
-            </div>
-          </Fade>
-        ) : null}
+          <TextField
+            className={classes.input}
+            placeholder="Material"
+            name="material"
+            type="text"
+            variant="outlined"
+            value={material}
+            onChange={onChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <AttachMoneyIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
 
-        <TextField
-          className={classes.input}
-          placeholder="Description"
-          name="description"
-          type="text"
-          variant="outlined"
-          multiline={true}
-          rows={3}
-          value={description}
-          onChange={onChange}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <MessageIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-
-        {current ? (
-          <Button
-            className={classes.btn}
-            type="submit"
-            variant="contained"
-            color="primary"
-            startIcon={<EditIcon />}
+          <FormLabel component="legend">Company</FormLabel>
+          <RadioGroup
+            row
+            aria-label="Company"
+            name="company"
+            value={company}
+            onChange={onChange}
           >
-            Edit Job
-          </Button>
-        ) : (
-          <Button
-            className={classes.btn}
-            type="submit"
-            variant="contained"
-            color="primary"
-            startIcon={<SaveIcon />}
+            <FormControlLabel
+              value="Express"
+              control={<Radio color="secondary" />}
+              label="Express Plumbing"
+            />
+            <FormControlLabel
+              value="Energy"
+              control={<Radio color="primary" />}
+              label="Energy Plumbing"
+            />
+          </RadioGroup>
+          <FormLabel component="legend">Work Type</FormLabel>
+          <RadioGroup
+            row
+            aria-label="Type"
+            name="type"
+            value={type}
+            onChange={onChange}
           >
-            Save Job{" "}
-          </Button>
-        )}
-      </form>
+            <FormControlLabel
+              value="Service"
+              control={<Radio color="secondary" />}
+              label="Service"
+            />
+            <FormControlLabel
+              value="Excavation"
+              control={<Radio color="primary" />}
+              label="Excavation"
+            />
+          </RadioGroup>
+          {type === "Excavation" ? (
+            <Fade in={type === "Excavation"} timeout={1500}>
+              <div>
+                <FormLabel component="legend">Commission Amount</FormLabel>
+                <RadioGroup
+                  row
+                  aria-label="Percentage"
+                  name="percentage"
+                  value={percentage}
+                  onChange={onChange}
+                >
+                  <FormControlLabel
+                    value="10"
+                    control={<Radio color="primary" />}
+                    label="10%"
+                  />
+                  <FormControlLabel
+                    value="35"
+                    control={<Radio color="primary" />}
+                    label="35%"
+                  />
+                  <FormControlLabel
+                    value="45"
+                    control={<Radio color="primary" />}
+                    label="45%"
+                  />
+                </RadioGroup>
+              </div>
+            </Fade>
+          ) : null}
+
+          <TextField
+            className={classes.input}
+            placeholder="Description"
+            name="description"
+            type="text"
+            variant="outlined"
+            multiline={true}
+            rows={3}
+            value={description}
+            onChange={onChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <MessageIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+
+          {current ? (
+            <Button
+              className={classes.btn}
+              type="submit"
+              variant="contained"
+              color="primary"
+              startIcon={<EditIcon />}
+            >
+              Edit Job
+            </Button>
+          ) : (
+            <Button
+              className={classes.btn}
+              type="submit"
+              variant="contained"
+              color="primary"
+              startIcon={<SaveIcon />}
+            >
+              Save Job{" "}
+            </Button>
+          )}
+        </form>
+      )}
     </Container>
   );
 };

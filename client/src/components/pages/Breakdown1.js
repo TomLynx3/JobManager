@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, Fragment, useState } from "react";
 import BreakdownItem from "../weekBreakdown/BreakdownItem";
 import AuthContext from "../../context/auth/authContext";
-import AlertContext from "../../context/alert/alertContext";
 import JobContext from "../../context/jobs/jobContext";
 import Loading from "../layout/Loading";
 import { makeStyles } from "@material-ui/core/styles";
@@ -15,18 +14,8 @@ import moment from "moment";
 const Breakdown = () => {
   const jobContext = useContext(JobContext);
   const authContext = useContext(AuthContext);
-  const alertContext = useContext(AlertContext);
-  const { setAlert } = alertContext;
-  const {
-    jobs,
-    getJobsWeek,
-    filtred,
-    loading,
-    clearFilter,
-    msg,
-    error,
-    clearAlerts,
-  } = jobContext;
+
+  const { jobs, getJobsWeek, filtred, clearFilter } = jobContext;
   const useStyles = makeStyles(() => ({
     wrapIcon: {
       verticalAlign: "middle",
@@ -55,17 +44,9 @@ const Breakdown = () => {
     clearFilter();
     trackPromise(getJobsWeek());
     setDate(days);
-    if (msg && msg.length > 0) {
-      setAlert(msg, "success");
-      clearAlerts();
-    }
-    if (error && error.length > 0) {
-      setAlert(error, "error");
-      clearAlerts();
-    }
 
     //eslint-disable-next-line
-  }, [msg, error]);
+  }, []);
   let curr = moment();
   let days = [];
   let from_date = curr.startOf("week");

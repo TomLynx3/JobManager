@@ -18,7 +18,6 @@ export default (state, action) => {
       return {
         ...state,
         isAuthenticated: true,
-        loading: false,
         user: action.payload,
         loaded: true,
       };
@@ -26,7 +25,6 @@ export default (state, action) => {
     case REGISTER_SUCCESS:
       return {
         ...state,
-        loading: false,
         msg: action.payload.msg,
         signUpSuccess: true,
       };
@@ -36,7 +34,6 @@ export default (state, action) => {
         ...state,
         ...action.payload,
         isAuthenticated: true,
-        loading: false,
         loaded: true,
         msg: action.payload.msg,
       };
@@ -45,10 +42,8 @@ export default (state, action) => {
         ...state,
         verSuccess: true,
         msg: action.payload.msg,
-        loading: false,
-        error: action.payload.error,
       };
-    case VERIFICATION_FAIL:
+
     case REGISTER_FAIL:
     case LOGIN_FAIL:
     case LOGOUT:
@@ -57,12 +52,18 @@ export default (state, action) => {
         ...state,
         token: null,
         isAuthenticated: false,
-        loading: false,
         user: null,
-        error: action.payload,
         hasPermissions: null,
         loaded: true,
         role: null,
+      };
+    case VERIFICATION_FAIL:
+      return {
+        ...state,
+        token: null,
+        isAuthenticated: false,
+        user: null,
+        hasPermissions: null,
       };
     case AUTH_ERROR:
     case LOGIN_FAIL:
@@ -70,18 +71,13 @@ export default (state, action) => {
         ...state,
         token: null,
         isAuthenticated: false,
-        loading: false,
         user: null,
-        error: action.payload,
         hasPermissions: null,
         loaded: true,
-        role: null,
       };
     case CLEAR_ERRORS:
       return {
         ...state,
-        error: null,
-        msg: [],
       };
     case CLEAN_SIGNUP_SUCCESS:
       return {

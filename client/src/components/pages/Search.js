@@ -4,39 +4,22 @@ import JobFilter from "../jobs/JobFilter";
 import { Typography, Paper, Icon, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AuthContext from "../../context/auth/authContext";
-import AlertContext from "../../context/alert/alertContext";
 import SearchIcon from "@material-ui/icons/Search";
 import JobContext from "../../context/jobs/jobContext";
 
 const Search = () => {
   const authContext = useContext(AuthContext);
   const jobContext = useContext(JobContext);
-  const alertContext = useContext(AlertContext);
-  const { setAlert } = alertContext;
-  const {
-    clearCash,
-    filtred,
-    cashFiltred,
-    msg,
-    error,
-    clearAlerts,
-  } = jobContext;
+
+  const { clearCash, filtred, cashFiltred, jobs } = jobContext;
 
   useEffect(() => {
     authContext.loadUser();
-    if (msg && msg.length > 0) {
-      setAlert(msg, "success");
-      clearAlerts();
-    }
-    if (error && error.length > 0) {
-      setAlert(error, "error");
-      clearAlerts();
-    }
 
     clearCash();
 
     //eslint-disable-next-line
-  }, [msg, error]);
+  }, [jobs]);
 
   const useStyles = makeStyles((theme) => ({
     paper: {
@@ -82,8 +65,6 @@ const Search = () => {
           ))}
         </div>
       );
-    } else if (filtred) {
-      console.log("hello");
     } else {
       return (
         <Paper className={classes.paper}>

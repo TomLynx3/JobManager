@@ -1,10 +1,9 @@
 import React, { useReducer } from "react";
 import axios from "axios";
-
+import { NotificationManager } from "react-notifications";
 import StatementContext from "./statementContext";
 import statementReducer from "./statementReducer";
 import {
-  GET_STATEMENT,
   LOG_ERROR,
   CLEAR_FILTER,
   GET_CASH_BALANCE,
@@ -13,7 +12,6 @@ import {
   CLEAR_LOGS,
   DELETE_CASH_LOG,
   ADD_MATERIAL,
-  CLEAR_ALERTS,
   GET_MATERIAL,
   DELETE_MATERIAL,
 } from "../types";
@@ -21,13 +19,9 @@ import {
 const StatementState = (props) => {
   const initialState = {
     statement: 0,
-    logFiltred: null,
-    error: [],
     cashBalance: [],
     cashLogs: [],
     msg: [],
-    loading: true,
-    loaded: false,
     material: [],
   };
 
@@ -40,23 +34,8 @@ const StatementState = (props) => {
 
       dispatch({ type: GET_CASH_LOGS, payload: res.data });
     } catch (err) {
-      dispatch({ type: LOG_ERROR, payload: err.response.msg });
-    }
-  };
-
-  //Get Statement for day
-  const getStatement = async (date) => {
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-    try {
-      const res = await axios.post("/api/statement/day", date, config);
-
-      dispatch({ type: GET_STATEMENT, payload: res.data });
-    } catch (err) {
-      dispatch({ type: LOG_ERROR, payload: err.response.msg });
+      dispatch({ type: LOG_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -66,7 +45,8 @@ const StatementState = (props) => {
       const res = await axios.get("/api/statement/cash");
       dispatch({ type: GET_CASH_BALANCE, payload: res.data });
     } catch (err) {
-      dispatch({ type: LOG_ERROR, payload: err.response.msg });
+      dispatch({ type: LOG_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -77,8 +57,10 @@ const StatementState = (props) => {
       const res = await axios.delete(`/api/statement/cash/logs/${_id}`);
 
       dispatch({ type: DELETE_CASH_LOG, payload: res.data });
+      NotificationManager.success(res.data.msg, "Success!", 2500);
     } catch (err) {
-      dispatch({ type: LOG_ERROR, payload: err.response.msg });
+      dispatch({ type: LOG_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -94,8 +76,10 @@ const StatementState = (props) => {
       const res = await axios.post("/api/statement/cash", log, config);
 
       dispatch({ type: ADD_CASH_LOG, payload: res.data });
+      NotificationManager.success(res.data.msg, "Success!", 2500);
     } catch (err) {
-      dispatch({ type: LOG_ERROR, payload: err.response.msg });
+      dispatch({ type: LOG_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -111,8 +95,10 @@ const StatementState = (props) => {
       const res = await axios.post("/api/statement/material", data, config);
 
       dispatch({ type: ADD_MATERIAL, payload: res.data });
+      NotificationManager.success(res.data.msg, "Success!", 2500);
     } catch (err) {
-      dispatch({ type: LOG_ERROR, payload: err.response.data });
+      dispatch({ type: LOG_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -129,7 +115,8 @@ const StatementState = (props) => {
 
       dispatch({ type: GET_MATERIAL, payload: res.data });
     } catch (err) {
-      dispatch({ type: LOG_ERROR, payload: err.response.data });
+      dispatch({ type: LOG_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -140,9 +127,10 @@ const StatementState = (props) => {
       const res = await axios.delete(`/api/statement/material/${_id}`);
 
       dispatch({ type: DELETE_MATERIAL, payload: res.data });
+      NotificationManager.success(res.data.msg, "Success!", 2500);
     } catch (err) {
-      console.log(err);
-      dispatch({ type: LOG_ERROR, payload: err.response });
+      dispatch({ type: LOG_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
 
@@ -155,33 +143,24 @@ const StatementState = (props) => {
     dispatch({ type: CLEAR_LOGS });
   };
 
-  const clearAlerts = () => {
-    dispatch({ type: CLEAR_ALERTS });
-  };
-
   return (
     <div>
       <StatementContext.Provider
         value={{
           logs: state.logs,
           logFiltred: state.logFiltred,
-          error: state.error,
           statement: state.statement,
           cashBalance: state.cashBalance,
           cashLogs: state.cashLogs,
-          loading: state.loading,
           msg: state.msg,
           material: state.material,
-          loaded: state.loaded,
           addCashLog,
           getCashLogs,
-          getStatement,
           deleteCashLog,
           clearLogs,
           clearFilter,
           getCashBalance,
           addMaterial,
-          clearAlerts,
           getMaterial,
           deleteMaterial,
         }}

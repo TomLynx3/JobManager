@@ -2,8 +2,6 @@ import React, { useEffect, useContext, useState } from "react";
 import Weeks from "../reports/Weeks";
 import ReportStatement from "../reports/ReportStatement";
 import AuthContext from "../../context/auth/authContext";
-import AlertContext from "../../context/alert/alertContext";
-import StatementContext from "../../context/statement/statementContext";
 import MaterialForm from "../material/MaterialForm";
 import { makeStyles } from "@material-ui/core/styles";
 import MaterialLogs from "../material/MaterialLogs";
@@ -37,22 +35,11 @@ const Material = () => {
 
   const classes = useStyles();
   const authContext = useContext(AuthContext);
-  const statementContext = useContext(StatementContext);
-  const alertContext = useContext(AlertContext);
-  const { setAlert } = alertContext;
-  const { msg, error, clearAlerts } = statementContext;
 
   useEffect(() => {
     authContext.loadUser();
-    if (msg && msg.length > 0) {
-      setAlert(msg, "success");
-      clearAlerts();
-    }
-    if (error && error.length > 0) {
-      setAlert(error, "error");
-      clearAlerts();
-    }
-  }, [msg, error]);
+    //eslint-disable-next-line
+  }, []);
 
   const getPeriod = (period) => {
     if (period !== undefined) {

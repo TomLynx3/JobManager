@@ -3,6 +3,7 @@ import JobContext from "../../context/jobs/jobContext";
 import Loading from "../layout/Loading";
 import JobItem from "../jobs/JobItem";
 import ErrorIcon from "@material-ui/icons/Error";
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Paper, Icon, Typography } from "@material-ui/core";
 
@@ -23,17 +24,19 @@ const CashJobs = () => {
 
   const classes = useStyles();
 
+  const { promiseInProgress } = usePromiseTracker();
+
   const jobContext = useContext(JobContext);
 
-  const { jobsCash, getJobsCash, loading } = jobContext;
+  const { jobsCash, getJobsCash } = jobContext;
 
   useEffect(() => {
-    getJobsCash();
+    trackPromise(getJobsCash());
     //eslint-disable-next-line
   }, []);
 
   const cashJobRender = () => {
-    if (!loading && jobsCash.length > 0) {
+    if (!promiseInProgress && jobsCash.length > 0) {
       return (
         <Grid container direction="row" spacing={4}>
           {jobsCash.map((jobs, index) => (
@@ -43,7 +46,7 @@ const CashJobs = () => {
           ))}
         </Grid>
       );
-    } else if (loading) {
+    } else if (promiseInProgress) {
       return (
         <Grid item md={12} xs={12} sm={12}>
           <Loading />

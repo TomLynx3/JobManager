@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
 import AuthContext from "../../context/auth/authContext";
-import AlertContext from "../../context/alert/alertContext";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Loading from "../layout/Loading";
+import { NotificationManager } from "react-notifications";
 import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import {
   CssBaseline,
@@ -46,17 +46,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn(props) {
   const authContext = useContext(AuthContext);
-  const alertContext = useContext(AlertContext);
 
-  const { setAlert } = alertContext;
-
-  const {
-    login,
-    error,
-    clearErrors,
-    isAuthenticated,
-    cleanSignUpSuccess,
-  } = authContext;
+  const { login, isAuthenticated, cleanSignUpSuccess } = authContext;
 
   const { promiseInProgress } = usePromiseTracker();
 
@@ -66,16 +57,11 @@ export default function SignIn(props) {
       props.history.push("/");
     }
 
-    if (error) {
-      setAlert(error, "error");
-      clearErrors();
-    }
-
     if (localStorage.name && localStorage.password) {
       setUser({ name: localStorage.name, password: localStorage.password });
     }
     //eslint-disable-next-line
-  }, [error, isAuthenticated, props.history]);
+  }, [isAuthenticated, props.history]);
   const [user, setUser] = useState({
     name: "",
     password: "",
@@ -105,7 +91,7 @@ export default function SignIn(props) {
   const onSubmit = (e) => {
     e.preventDefault();
     if (name === "" || password === "") {
-      setAlert("Please fill in all fields", "error");
+      NotificationManager.error("Please fill all fields", "Error!", 2500);
     } else {
       trackPromise(
         login({

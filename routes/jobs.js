@@ -20,7 +20,7 @@ router.get("/", auth, async (req, res) => {
     res.json(jobs);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 
@@ -44,7 +44,7 @@ router.get("/week", auth, async (req, res) => {
     res.json(jobs);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 
@@ -92,7 +92,7 @@ router.post("/filtred", auth, async (req, res) => {
     }
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 
@@ -122,7 +122,7 @@ router.post("/filtredweek", auth, async (req, res) => {
     res.json(jobsFiltred);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 
@@ -196,7 +196,7 @@ router.post(
       }
     } catch (err) {
       console.error(err.message);
-      res.status(500).send("Server error");
+      res.status(500).send({ error: "Server error" });
     }
   }
 );
@@ -258,11 +258,11 @@ router.put("/:id", auth, async (req, res) => {
   try {
     let job = await Jobs.findById(req.params.id);
 
-    if (!job) return res.status(404).json({ msg: "Job Not Found" });
+    if (!job) return res.status(404).json({ error: "Job Not Found" });
 
     //Make sure user owns job
     if (job.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: "Not Authorized" });
+      return res.status(401).json({ error: "Not Authorized" });
     }
     job = await Jobs.findByIdAndUpdate(
       req.params.id,
@@ -273,7 +273,7 @@ router.put("/:id", auth, async (req, res) => {
     res.json({ msg: "Job was successfully edited ", job });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send({ error: "Server error" });
   }
 });
 
@@ -284,11 +284,11 @@ router.delete("/:id", auth, async (req, res) => {
   try {
     let job = await Jobs.findById(req.params.id);
 
-    if (!job) return res.status(404).json({ msg: "Job Not Found" });
+    if (!job) return res.status(404).json({ error: "Job Not Found" });
 
     //Make sure user owns job
     if (job.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: "Not Authorized" });
+      return res.status(401).json({ error: "Not Authorized" });
     }
 
     await Jobs.findByIdAndRemove(req.params.id);
@@ -296,7 +296,7 @@ router.delete("/:id", auth, async (req, res) => {
     res.json({ msg: "Job deleted", _id: req.params.id });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send({ error: "Server error" });
   }
 });
 
@@ -334,7 +334,7 @@ router.post(
       });
     } catch (err) {
       console.error(err.message);
-      res.status(500).send("Server error");
+      res.status(500).send({ error: "Server error" });
     }
   }
 );
@@ -390,7 +390,7 @@ router.post("/getCash", auth, async (req, res) => {
     res.json(cashJobs);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 
@@ -401,10 +401,10 @@ router.delete("/cash/:id", auth, async (req, res) => {
   try {
     let job = await JobsCash.findById(req.params.id);
 
-    if (!job) return res.status(404).json({ msg: "Job Not Found" });
+    if (!job) return res.status(404).json({ error: "Job Not Found" });
     //Make sure user has permissions owns job
     if (job.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: "Not Authorized" });
+      return res.status(401).json({ error: "Not Authorized" });
     }
 
     await JobsCash.findByIdAndRemove(req.params.id);
@@ -413,7 +413,7 @@ router.delete("/cash/:id", auth, async (req, res) => {
       .json({ msg: "Cash Job deleted", _id: req.params.id });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send({ error: "Server error" });
   }
 });
 
@@ -446,12 +446,12 @@ router.put("/cash/:id", auth, async (req, res) => {
   try {
     let job = await JobsCash.findById(req.params.id);
 
-    if (!job) return res.status(404).json({ msg: "Job Not Found" });
+    if (!job) return res.status(404).json({ error: "Job Not Found" });
 
     //Make sure user owns job
 
     if (job.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: "Not Authorized" });
+      return res.status(401).json({ error: "Not Authorized" });
     }
 
     job = await JobsCash.findByIdAndUpdate(
@@ -463,7 +463,7 @@ router.put("/cash/:id", auth, async (req, res) => {
     res.json({ msg: "Cash Job Was Successfully Edited", job });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send({ error: "Server error" });
   }
 });
 
@@ -477,7 +477,7 @@ router.get("/unpaid", auth, async (req, res) => {
     res.json(job);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 
@@ -489,19 +489,19 @@ router.put("/unpaid/:id", auth, async (req, res) => {
   try {
     let job = await Jobs.findById(req.params.id);
 
-    if (!job) return res.status(404).json({ msg: "Job Not Found" });
+    if (!job) return res.status(404).json({ error: "Job Not Found" });
 
     //Make sure user owns job
 
     if (job.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: "Not Authorized" });
+      return res.status(401).json({ error: "Not Authorized" });
     }
     job = await Jobs.findByIdAndUpdate(req.params.id, { unpaid: false });
 
     res.json({ msg: "Job Was Successfully Updated ", job });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 
@@ -531,7 +531,7 @@ router.get("/twoweeks", auth, async (req, res) => {
     res.json(jobs);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 
@@ -628,7 +628,7 @@ router.post("/calendar/statement/", auth, async (req, res) => {
     res.json(statement);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 
   // @route   POST api/jobs/sendfile
@@ -654,7 +654,7 @@ router.post("/calendar/statement/", auth, async (req, res) => {
         return updatedResult;
       };
       if (extension != ".pdf" || file === null) {
-        res.status(400).json({ msg: "Please upload pdf file." });
+        res.status(400).json({ error: "Please upload pdf file." });
       } else {
         pdf(file).then((data) => {
           const promise = new Promise((resolve) => {
@@ -678,7 +678,7 @@ router.post("/calendar/statement/", auth, async (req, res) => {
       }
     } catch (err) {
       console.error(err.message);
-      res.status(500).send("Server error");
+      res.status(500).send({ error: "Server error" });
     }
   });
 });

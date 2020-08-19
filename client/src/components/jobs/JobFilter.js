@@ -9,13 +9,12 @@ import Button from "@material-ui/core/Button";
 import SearchIcon from "@material-ui/icons/Search";
 import BrushIcon from "@material-ui/icons/Brush";
 import JobContext from "../../context/jobs/jobContext";
-import AlertContext from "../../context/alert/alertContext";
+
+import { NotificationManager } from "react-notifications";
 
 const JobFilter = () => {
   const jobContext = useContext(JobContext);
   const { filterJobs, clearFilter, filtred } = jobContext;
-  const alertContext = useContext(AlertContext);
-  const { setAlert } = alertContext;
 
   const [text, setText] = useState({
     address: "",
@@ -36,7 +35,7 @@ const JobFilter = () => {
     ) {
       filterJobs(text);
     } else {
-      setAlert("Please fill form", "error");
+      NotificationManager.error("Please fill form", "Error!", 2500);
     }
   };
 

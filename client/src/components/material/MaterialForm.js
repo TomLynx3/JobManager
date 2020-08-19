@@ -1,7 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import StatementContext from "../../context/statement/statementContext";
 import { makeStyles } from "@material-ui/core/styles";
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import moment from "moment";
+import Loading from "../layout/Loading";
 import {
   TextField,
   InputAdornment,
@@ -42,6 +44,8 @@ const MaterialForm = ({ handleClose }) => {
     },
   }));
 
+  const { promiseInProgress } = usePromiseTracker();
+
   const classes = useStyles();
   const statementContext = useContext(StatementContext);
 
@@ -72,88 +76,92 @@ const MaterialForm = ({ handleClose }) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    addMaterial(material);
+    trackPromise(addMaterial(material));
     setMaterial({ date: "", amount: "", description: "", type: "Material" });
     handleClose();
   };
   return (
     <Container component="main" maxWidth="xs" className={classes.modalForm}>
-      <form onSubmit={onSubmit}>
-        <Typography className={classes.heading} align="center">
-          Add {type === "Material" ? "Material" : "Gas"}
-        </Typography>
-        <TextField
-          className={classes.input}
-          name="date"
-          variant="outlined"
-          type="date"
-          value={date}
-          onChange={onChange}
-        />
-        <TextField
-          className={classes.input}
-          placeholder="Amount"
-          name="amount"
-          required
-          type="text"
-          variant="outlined"
-          value={amount}
-          onChange={onChange}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <AttachMoneyIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <FormLabel component="legend">Material Type</FormLabel>
-        <RadioGroup
-          row
-          aria-label="material"
-          name="type"
-          value={type}
-          onChange={onChange}
-        >
-          <FormControlLabel
-            value="Material"
-            control={<Radio color="secondary" />}
-            label="Material"
+      {promiseInProgress === true ? (
+        <Loading />
+      ) : (
+        <form onSubmit={onSubmit}>
+          <Typography className={classes.heading} align="center">
+            Add {type === "Material" ? "Material" : "Gas"}
+          </Typography>
+          <TextField
+            className={classes.input}
+            name="date"
+            variant="outlined"
+            type="date"
+            value={date}
+            onChange={onChange}
           />
-          <FormControlLabel
-            value="Gas"
-            control={<Radio color="primary" />}
-            label="Gas"
+          <TextField
+            className={classes.input}
+            placeholder="Amount"
+            name="amount"
+            required
+            type="text"
+            variant="outlined"
+            value={amount}
+            onChange={onChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <AttachMoneyIcon />
+                </InputAdornment>
+              ),
+            }}
           />
-        </RadioGroup>
-        <TextField
-          className={classes.input}
-          placeholder="Description"
-          name="description"
-          type="text"
-          variant="outlined"
-          multiline={true}
-          rows={3}
-          value={description}
-          onChange={onChange}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <MessageIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
-        <Button
-          className={classes.btn}
-          type="submit"
-          variant="contained"
-          color="primary"
-          startIcon={<SaveIcon />}
-        >
-          Add {type === "Material" ? "Material" : "Gas"}
-        </Button>
-      </form>
+          <FormLabel component="legend">Material Type</FormLabel>
+          <RadioGroup
+            row
+            aria-label="material"
+            name="type"
+            value={type}
+            onChange={onChange}
+          >
+            <FormControlLabel
+              value="Material"
+              control={<Radio color="secondary" />}
+              label="Material"
+            />
+            <FormControlLabel
+              value="Gas"
+              control={<Radio color="primary" />}
+              label="Gas"
+            />
+          </RadioGroup>
+          <TextField
+            className={classes.input}
+            placeholder="Description"
+            name="description"
+            type="text"
+            variant="outlined"
+            multiline={true}
+            rows={3}
+            value={description}
+            onChange={onChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <MessageIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button
+            className={classes.btn}
+            type="submit"
+            variant="contained"
+            color="primary"
+            startIcon={<SaveIcon />}
+          >
+            Add {type === "Material" ? "Material" : "Gas"}
+          </Button>
+        </form>
+      )}
     </Container>
   );
 };

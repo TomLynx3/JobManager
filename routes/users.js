@@ -38,7 +38,7 @@ router.post(
 
       let user = await User.findOne({ email });
       if (user) {
-        return res.status(400).json({ msg: "User already exists" });
+        return res.status(400).json({ error: "User already exists" });
       } else {
         userTemp = new TempUser({
           email,
@@ -99,7 +99,7 @@ router.post(
           transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
               console.log(error);
-              res.send("error");
+              res.send({ error: "Server Error" });
             } else {
               res.status(200).json({
                 msg: `A verification link has been send yo your email account ${email}`,
@@ -110,7 +110,7 @@ router.post(
       }
     } catch (err) {
       console.error(err.message);
-      res.status(500).send("Server Error");
+      res.status(500).send({ error: "Server Error" });
     }
   }
 );
@@ -134,7 +134,7 @@ router.get("/:token", async (req, res) => {
     }
     let user = await TempUser.findOne(verificationToken._userId);
     if (!user) {
-      return res.status(500).send("Server Error");
+      return res.status(500).send({ error: "Server Error" });
     }
 
     newUser = new User({
@@ -149,7 +149,7 @@ router.get("/:token", async (req, res) => {
     res.status(200).json({ msg: "Your email was successfully verified" });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 

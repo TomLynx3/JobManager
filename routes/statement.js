@@ -28,7 +28,7 @@ router.post("/cash", auth, async (req, res) => {
     res.json({ msg: "Cash Balance was succesfully edited", log });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 
@@ -44,7 +44,7 @@ router.get("/cash/logs", auth, async (req, res) => {
     res.json(logs);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 
@@ -57,16 +57,16 @@ router.delete("/cash/logs/:id", auth, async (req, res) => {
   try {
     let log = await LogsCash.findById(req.params.id);
 
-    if (!log) return res.status(404).json({ msg: "Log Not Found" });
+    if (!log) return res.status(404).json({ error: "Log Not Found" });
     if (log.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: "Not Authorized" });
+      return res.status(401).json({ error: "Not Authorized" });
     }
 
     await LogsCash.findByIdAndRemove(req.params.id);
     res.json({ msg: "Log deleted", _id: req.params.id });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 
@@ -89,7 +89,7 @@ router.get("/cash", auth, async (req, res) => {
     res.json(result.toFixed(2));
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 
@@ -113,7 +113,7 @@ router.post("/material", auth, async (req, res) => {
     res.status(200).json({ msg: `${type} was successfully added`, material });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 
@@ -167,7 +167,7 @@ router.post("/getmaterial", auth, async (req, res) => {
     res.json(material);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(500).send({ error: "Server Error" });
   }
 });
 
@@ -179,17 +179,17 @@ router.delete("/material/:id", auth, async (req, res) => {
     let materialItem = await Material.findById(req.params.id);
 
     if (!materialItem)
-      return res.status(404).json({ msg: "Can't find material item.." });
+      return res.status(404).json({ error: "Can't find material item.." });
     //Make sure user has permissions owns job
     if (materialItem.user.toString() !== req.user.id) {
-      return res.status(401).json("Not Authorized");
+      return res.status(401).json({ error: "Not Authorized" });
     }
 
     await Material.findByIdAndRemove(req.params.id);
     res.json({ msg: "Material item deleted successfully", _id: req.params.id });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send({ error: "Server error" });
   }
 });
 

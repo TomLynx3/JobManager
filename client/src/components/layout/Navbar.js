@@ -1,6 +1,8 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import clsx from "clsx";
 import AuthContext from "../../context/auth/authContext";
+import { NotificationContainer } from "react-notifications";
+import "react-notifications/lib/notifications.css";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
@@ -28,7 +30,6 @@ import Home from "../pages/Home";
 import Report from "../reports/Report";
 import Logout from "../auth/Logout";
 import Cash from "../pages/Cash";
-import Alerts from "./Alerts";
 import PrivateRoute from "../routing/PrivateRoute";
 import Material from "../pages/Material";
 
@@ -112,11 +113,6 @@ const useStyles = makeStyles((theme) => ({
   fixedHeight: {
     height: "90vh",
   },
-  alert: {
-    width: "600px",
-    zIndex: "10",
-    position: "relative",
-  },
 }));
 
 export default function Dashboard() {
@@ -191,7 +187,7 @@ export default function Dashboard() {
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
-            <Alerts />
+            <NotificationContainer />
             <Grid item xs={12} md={12} lg={12}>
               <Paper className={fixedHeightPaper}>
                 <Switch>

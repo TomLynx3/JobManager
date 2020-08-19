@@ -27,6 +27,7 @@ const AuthState = (props) => {
     user: null,
     error: null,
     msg: [],
+    loading: true,
     verSuccess: null,
     signUpSuccess: false,
   };
@@ -99,7 +100,6 @@ const AuthState = (props) => {
         payload: res.data,
       });
       NotificationManager.success(res.data.msg, "Successful!", 2500);
-      loadUser();
     } catch (err) {
       dispatch({
         type: LOGIN_FAIL,
@@ -121,6 +121,7 @@ const AuthState = (props) => {
         isAuthenticated: state.isAuthenticated,
         user: state.user,
         msg: state.msg,
+        loading: state.loading,
         signUpSuccess: state.signUpSuccess,
         verSuccess: state.verSuccess,
         register,

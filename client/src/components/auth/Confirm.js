@@ -3,6 +3,8 @@ import AuthContext from "../../context/auth/authContext";
 import SettingsBackupRestoreIcon from "@material-ui/icons/SettingsBackupRestore";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Grid } from "@material-ui/core/";
+import Loading from "../layout/Loading";
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 
 const Confirm = (props) => {
   const useStyles = makeStyles((theme) => ({
@@ -19,25 +21,35 @@ const Confirm = (props) => {
 
   const { emailVer, verSuccess } = authContext;
 
+  const { promiseInProgress } = usePromiseTracker();
+
   useEffect(() => {
-    emailVer(props.history.push);
-    if (verSuccess === true) {
-      props.history.push("/login");
-    }
+    trackPromise(emailVer(props.match.params));
 
     //eslint-disable-next-line
   }, []);
 
+  const redirect = () => {
+    if (verSuccess === true) {
+      props.history.push("/login");
+    }
+  };
+
   return (
     <Grid className={classes.flex}>
-      <Button
-        href="/login"
-        variant="contained"
-        color="primary"
-        startIcon={<SettingsBackupRestoreIcon />}
-      >
-        Go Back
-      </Button>
+      {promiseInProgress === true ? (
+        <Loading />
+      ) : (
+        <Button
+          href="/login"
+          variant="contained"
+          color="primary"
+          startIcon={<SettingsBackupRestoreIcon />}
+        >
+          Go Back
+        </Button>
+      )}
+      {redirect()}
     </Grid>
   );
 };

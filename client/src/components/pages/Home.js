@@ -65,7 +65,7 @@ const Home = () => {
             {selected.component === "Job" ? <JobForm /> : <CashForm1 />}
           </Grid>
           <Grid item md={6} xs={12} sm={6}>
-            <Jobs />
+            {authContext.user && <Jobs />}
           </Grid>
         </Grid>
       </Grid>

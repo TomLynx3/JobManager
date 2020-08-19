@@ -19,7 +19,7 @@ export default (state, action) => {
         ...state,
         isAuthenticated: true,
         user: action.payload,
-        loaded: true,
+        loading: false,
       };
 
     case REGISTER_SUCCESS:
@@ -27,6 +27,7 @@ export default (state, action) => {
         ...state,
         msg: action.payload.msg,
         signUpSuccess: true,
+        loading: false,
       };
     case LOGIN_SUCCESS:
       localStorage.setItem("token", action.payload.token);
@@ -36,12 +37,14 @@ export default (state, action) => {
         isAuthenticated: true,
         loaded: true,
         msg: action.payload.msg,
+        loading: false,
       };
     case VERIFICATION_SUCCESS:
       return {
         ...state,
         verSuccess: true,
         msg: action.payload.msg,
+        loading: false,
       };
 
     case REGISTER_FAIL:
@@ -56,6 +59,7 @@ export default (state, action) => {
         hasPermissions: null,
         loaded: true,
         role: null,
+        loading: false,
       };
     case VERIFICATION_FAIL:
       return {
@@ -64,6 +68,7 @@ export default (state, action) => {
         isAuthenticated: false,
         user: null,
         hasPermissions: null,
+        loading: false,
       };
     case AUTH_ERROR:
     case LOGIN_FAIL:
@@ -74,6 +79,7 @@ export default (state, action) => {
         user: null,
         hasPermissions: null,
         loaded: true,
+        loading: false,
       };
     case CLEAR_ERRORS:
       return {

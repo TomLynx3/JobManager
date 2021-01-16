@@ -31,6 +31,7 @@ import Report from "../reports/Report";
 import Logout from "../auth/Logout";
 import Cash from "../pages/Cash";
 import PrivateRoute from "../routing/PrivateRoute";
+import AllJobs from '../pages/AllJobs'
 import Material from "../pages/Material";
 
 const drawerWidth = 240;
@@ -194,10 +195,12 @@ export default function Dashboard() {
                   <PrivateRoute exact path="/" component={Home} />
                   <PrivateRoute path="/cash" component={Cash}></PrivateRoute>
                   <PrivateRoute
-                    eexact
+                    exact
                     path="/report"
                     component={Report}
                   ></PrivateRoute>
+                  <PrivateRoute exact path="/alljobs" component={AllJobs}> 
+                  </PrivateRoute>
                   <PrivateRoute
                     exact
                     path="/breakdown"

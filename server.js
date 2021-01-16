@@ -10,7 +10,7 @@ connectDB();
 
 //Init Middleware (bodyparser)
 
-app.use(express.json({ extended: false }));
+app.use(express.json({limit: "10mb"}));
 app.use(fileupload());
 //Define Routes
 

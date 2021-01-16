@@ -1,0 +1,225 @@
+[{
+  "_id": {
+    "$oid": "5f3bd7f068853800177e8cbf"
+  },
+  "date": "Tuesday, August 18 2020",
+  "address": "75 Markham Street, Toronto, ON M6J 2G4 Canada",
+  "amount": 280,
+  "worker": "Yuri",
+  "material": 0,
+  "company": "Express",
+  "description": "",
+  "user": {
+    "$oid": "5f395ab10b0a1f02a405276d"
+  },
+  "total_earned": 140,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f3d8a92d530d600179af52c"
+  },
+  "date": "Wednesday, August 19 2020",
+  "address": "120 Rutherford Road South, Brampton, ON L6W 3J5 Canada",
+  "amount": 250,
+  "worker": "Yuri",
+  "material": 0,
+  "company": "Express",
+  "description": "Toilet snaking ",
+  "user": {
+    "$oid": "5f395ab10b0a1f02a405276d"
+  },
+  "total_earned": 125,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f43de6932771a001750dd3e"
+  },
+  "date": "Monday, August 24 2020",
+  "address": "437 Faith Drive, Mississauga, ON L5R 3Y8 Canada",
+  "amount": 280,
+  "worker": "Yuri",
+  "material": 0,
+  "company": "Express",
+  "description": "Kitchen sink snaking ",
+  "user": {
+    "$oid": "5f395ab10b0a1f02a405276d"
+  },
+  "total_earned": 140,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f4807eb5d44a70017d4335a"
+  },
+  "date": "Thursday, August 27 2020",
+  "address": "Nicholls Street,53 ",
+  "amount": 400,
+  "worker": "Tom",
+  "material": 0,
+  "company": "Express",
+  "description": "",
+  "user": {
+    "$oid": "5f3cf4619f24a800173ea270"
+  },
+  "total_earned": 200,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f484cb6df6f8700173fa02e"
+  },
+  "date": "Thursday, August 27 2020",
+  "address": "1372 Clearwater Crescent, Oakville, ON L6H 7J7 Canada",
+  "amount": 2840,
+  "worker": "Yuri",
+  "material": 0,
+  "company": "Express",
+  "description": "Two shower faucets and liners ",
+  "user": {
+    "$oid": "5f395ab10b0a1f02a405276d"
+  },
+  "total_earned": 1420,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f484d56df6f8700173fa02f"
+  },
+  "date": "Thursday, August 27 2020",
+  "address": "41 Squire Graham Lane, Woodbridge, ON L4L 7C5 Canada",
+  "amount": 250,
+  "worker": "Yuri",
+  "material": 0,
+  "company": "Express",
+  "description": "Bide cartridge installation ",
+  "user": {
+    "$oid": "5f395ab10b0a1f02a405276d"
+  },
+  "total_earned": 125,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f4fb9164e1ffd001707e192"
+  },
+  "date": "Tuesday, September 01 2020",
+  "address": "10 Yonge Street #2810, Toronto, ON M5E 1R4 Canada",
+  "amount": 150,
+  "worker": "Yuri",
+  "material": 0,
+  "company": "Express",
+  "description": "Tight it up ",
+  "user": {
+    "$oid": "5f395ab10b0a1f02a405276d"
+  },
+  "total_earned": 75,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f4fb9de4e1ffd001707e194"
+  },
+  "date": "Tuesday, September 01 2020",
+  "address": "465 Roxton Road, Toronto, ON M6G 3R5 Canada",
+  "amount": 280,
+  "worker": "Yuri",
+  "material": 0,
+  "company": "Express",
+  "description": "Kitchen faucet installation ",
+  "user": {
+    "$oid": "5f395ab10b0a1f02a405276d"
+  },
+  "total_earned": 140,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f57a9e9e862e700172b1e1a"
+  },
+  "date": "Tuesday, September 08 2020",
+  "address": "41 Squire Graham Lane, Woodbridge, ON L4L 7C5 Canada",
+  "amount": 250,
+  "worker": "Yuri",
+  "material": 0,
+  "company": "Express",
+  "description": "Shower cartridge installation ",
+  "user": {
+    "$oid": "5f395ab10b0a1f02a405276d"
+  },
+  "total_earned": 125,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f68c2d2bb67bd00170be150"
+  },
+  "date": "Saturday, September 19 2020",
+  "address": "3 Keyworth Trail, Scarborough, ON M1S 2T9 Canada",
+  "amount": 450,
+  "worker": "Yuri",
+  "material": 0,
+  "company": "Express",
+  "description": "Main shut off valve replace ",
+  "user": {
+    "$oid": "5f395ab10b0a1f02a405276d"
+  },
+  "total_earned": 225,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f6ca9e140e9010017262836"
+  },
+  "date": "Thursday, September 24 2020",
+  "address": "56 Monaco Cres Richmond Hill ON L4S 1X6 Canada",
+  "amount": 300,
+  "worker": "Yuri",
+  "material": 0,
+  "company": "Express",
+  "description": "Snake kitchen sink",
+  "user": {
+    "$oid": "5f395ab10b0a1f02a405276d"
+  },
+  "total_earned": 150,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f748dcc06b9620017c1b361"
+  },
+  "date": "Wednesday, September 30 2020",
+  "address": "33 Eddystone Avenue, North York, ON M3N 1H5 Canada",
+  "amount": 400,
+  "worker": "Yuri",
+  "material": 0,
+  "company": "Express",
+  "description": "Snake main drain ",
+  "user": {
+    "$oid": "5f395ab10b0a1f02a405276d"
+  },
+  "total_earned": 200,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5f870af8757d9a00178de65e"
+  },
+  "date": "Wednesday, October 14 2020",
+  "address": "100 Clairton Cres Toronto ON M6N 2M6 Canada",
+  "amount": 340,
+  "worker": "Yuri",
+  "material": 0,
+  "company": "Express",
+  "description": "Two washing machine holes ",
+  "user": {
+    "$oid": "5f395ab10b0a1f02a405276d"
+  },
+  "total_earned": 170,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "5fb5b21d93b32e0017a5bfa2"
+  },
+  "date": "Wednesday, November 18 2020",
+  "address": "14 POINT GREY CRESCENT",
+  "amount": 900,
+  "worker": "Yuri",
+  "material": 0,
+  "company": "Express",
+  "description": "",
+  "user": {
+    "$oid": "5f395ab10b0a1f02a405276d"
+  },
+  "total_earned": 450,
+  "__v": 0
+}]

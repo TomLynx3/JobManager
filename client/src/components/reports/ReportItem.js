@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import clsx from "clsx";
 import ReceiptIcon from "@material-ui/icons/Receipt";
 import Backdrop from "@material-ui/core/Backdrop";
@@ -21,8 +21,9 @@ import {
 } from "@material-ui/core";
 
 import JobItem from "../jobs/JobItem";
+import { red } from "@material-ui/core/colors";
 
-const ReportItem = ({ jobs }) => {
+const ReportItem = ({ jobs , test}) => {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => {
@@ -61,10 +62,11 @@ const ReportItem = ({ jobs }) => {
     },
   }));
 
+
   const classes = useStyles();
 
   return (
-    <Grid item xs={12} md={4} sm={6}>
+    <Grid item xs={12} md={4} sm={6} >
       <Card
         className={clsx(jobs.unpaid ? classes.cardUnpaid : classes.cardPaid)}
         onClick={handleOpen}
@@ -130,7 +132,7 @@ const ReportItem = ({ jobs }) => {
       >
         <Fade in={open}>
           <div className={classes.modalContent}>
-            <JobItem jobs={jobs} callback={open} close={handleClose}></JobItem>;
+            <JobItem jobs={jobs} callback={open} close={handleClose} ></JobItem>;
           </div>
         </Fade>
       </Modal>

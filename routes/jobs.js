@@ -2,12 +2,22 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const path = require("path");
-const pdf = require("pdf-parse");
-const { check, validationResult } = require("express-validator");
+var fs = require("fs");
+
+const pdf = require('pdf-parse');
+const extract = require('pdf-text-extract')
+
+const {
+  check,
+  validationResult
+} = require("express-validator");
 const moment = require("moment");
+const { createWorker} = require('tesseract.js');
+
 const Jobs = require("../models/Jobs");
 const JobsCash = require("../models/JobsCash");
 const Material = require("../models/Material");
+const { ObjectId, Mongoose } = require("mongoose");
 
 // @route   GET api/jobs
 //@ desc    Get current day jobs
@@ -16,13 +26,49 @@ router.get("/", auth, async (req, res) => {
   let today = moment().format("dddd, MMMM DD YYYY");
 
   try {
-    const jobs = await Jobs.find({ date: today, user: req.user.id });
+    const jobs = await Jobs.find({
+      date: today,
+      user: req.user.id
+    });
+    
     res.json(jobs);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: "Server Error" });
+    res.status(500).send({
+      error: "Server Error"
+    });
   }
 });
+
+// @route   GET api/alljobs
+//@ desc    Get ALL JOBS
+//@access   Private
+
+router.post("/alljobs", auth, async (req, res) => {
+  const limit = req.body.limit
+  const skip = limit-50;
+  
+  try {
+    const jobs = await Jobs.find({
+
+      user: req.user.id,
+    }).sort({_id:'desc'}).skip(skip).limit(50);
+    // jobs.map((item)=>{
+      
+    //    console.log(item._id.getTimestamp())
+    // })
+    
+      res.json(jobs);
+    
+   
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send({
+      error: "Server Error"
+    });
+  }
+});
+
 
 // @route   GET api/jobs/week
 //@ desc    Get current week jobs
@@ -35,16 +81,23 @@ router.get("/week", auth, async (req, res) => {
   for (i = 1; i <= 7; i++) {
     days.push(
       moment(from_date + 1)
-        .add(i, "days")
-        .format("dddd, MMMM DD YYYY")
+      .add(i, "days")
+      .format("dddd, MMMM DD YYYY")
     );
   }
   try {
-    const jobs = await Jobs.find({ date: { $in: days }, user: req.user.id });
+    const jobs = await Jobs.find({
+      date: {
+        $in: days
+      },
+      user: req.user.id
+    });
     res.json(jobs);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: "Server Error" });
+    res.status(500).send({
+      error: "Server Error"
+    });
   }
 });
 
@@ -53,12 +106,20 @@ router.get("/week", auth, async (req, res) => {
 //@ desc    Get filtred jobs
 //@access   Private
 router.post("/filtred", auth, async (req, res) => {
-  const { address, date, invoice } = req.body;
+  const {
+    address,
+    date,
+    invoice
+  } = req.body;
 
   try {
     if (address !== "") {
-      const jobs = await Jobs.find({ user: req.user.id });
-      const cashJobs = await JobsCash.find({ user: req.user.id });
+      const jobs = await Jobs.find({
+        user: req.user.id
+      });
+      const cashJobs = await JobsCash.find({
+        user: req.user.id
+      });
       const jobFiltred = jobs.filter((job) => {
         const regex = new RegExp(address, "gi");
         return job.address.match(regex);
@@ -68,31 +129,48 @@ router.post("/filtred", auth, async (req, res) => {
         return job.address.match(regex);
       });
 
-      res.json({ cashFiltred: cashFiltred, jobFiltred: jobFiltred });
+      res.json({
+        cashFiltred: cashFiltred,
+        jobFiltred: jobFiltred
+      });
     }
     if (invoice !== "") {
       const jobs = await Jobs.find({
-        invoice: { $in: invoice },
+        invoice: {
+          $in: invoice
+        },
         user: req.user.id,
       });
-      res.json({ cashFiltred: null, jobFiltred: jobs });
+      res.json({
+        cashFiltred: null,
+        jobFiltred: jobs
+      });
     }
     if (date !== "") {
       const dateFormat = moment(date).format("dddd, MMMM DD YYYY");
       const jobs = await Jobs.find({
-        date: { $in: dateFormat },
+        date: {
+          $in: dateFormat
+        },
         user: req.user.id,
       });
       const cash = await JobsCash.find({
-        date: { $in: dateFormat },
+        date: {
+          $in: dateFormat
+        },
         user: req.user.id,
       });
 
-      res.json({ cashFiltred: cash, jobFiltred: jobs });
+      res.json({
+        cashFiltred: cash,
+        jobFiltred: jobs
+      });
     }
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: "Server Error" });
+    res.status(500).send({
+      error: "Server Error"
+    });
   }
 });
 
@@ -100,7 +178,9 @@ router.post("/filtred", auth, async (req, res) => {
 //@ desc    Get current day jobs
 //@access   Private
 router.post("/filtredweek", auth, async (req, res) => {
-  const { date } = req.body;
+  const {
+    date
+  } = req.body;
 
   let curr = moment(date);
   let days = [];
@@ -109,20 +189,24 @@ router.post("/filtredweek", auth, async (req, res) => {
   for (i = 1; i <= 7; i++) {
     days.push(
       moment(from_date + 1)
-        .add(i, "days")
-        .format("dddd, MMMM DD YYYY")
+      .add(i, "days")
+      .format("dddd, MMMM DD YYYY")
     );
   }
 
   try {
     const jobsFiltred = await Jobs.find({
-      date: { $in: days },
+      date: {
+        $in: days
+      },
       user: req.user.id,
     });
     res.json(jobsFiltred);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: "Server Error" });
+    res.status(500).send({
+      error: "Server Error"
+    });
   }
 });
 
@@ -135,7 +219,9 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({
+        errors: errors.array()
+      });
     }
     const {
       date,
@@ -177,7 +263,10 @@ router.post(
             break;
         }
         const job = await newJob.save();
-        res.json({ msg: "Job Successfully Added", job });
+        res.json({
+          msg: "Job Successfully Added",
+          job
+        });
       } else {
         let commission = Number(percentage / 100);
         switch (commission) {
@@ -192,11 +281,16 @@ router.post(
             newJob.total_earned = Number(amount * commission).toFixed(2);
         }
         const job = await newJob.save();
-        res.json({ msg: "Job Successfully Added", job });
+        res.json({
+          msg: "Job Successfully Added",
+          job
+        });
       }
     } catch (err) {
       console.error(err.message);
-      res.status(500).send({ error: "Server error" });
+      res.status(500).send({
+        error: "Server error"
+      });
     }
   }
 );
@@ -258,22 +352,33 @@ router.put("/:id", auth, async (req, res) => {
   try {
     let job = await Jobs.findById(req.params.id);
 
-    if (!job) return res.status(404).json({ error: "Job Not Found" });
+    if (!job) return res.status(404).json({
+      error: "Job Not Found"
+    });
 
     //Make sure user owns job
     if (job.user.toString() !== req.user.id) {
-      return res.status(401).json({ error: "Not Authorized" });
+      return res.status(401).json({
+        error: "Not Authorized"
+      });
     }
     job = await Jobs.findByIdAndUpdate(
-      req.params.id,
-      { $set: jobFields },
-      { new: true }
+      req.params.id, {
+        $set: jobFields
+      }, {
+        new: true
+      }
     );
 
-    res.json({ msg: "Job was successfully edited ", job });
+    res.json({
+      msg: "Job was successfully edited ",
+      job
+    });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: "Server error" });
+    res.status(500).send({
+      error: "Server error"
+    });
   }
 });
 
@@ -284,19 +389,28 @@ router.delete("/:id", auth, async (req, res) => {
   try {
     let job = await Jobs.findById(req.params.id);
 
-    if (!job) return res.status(404).json({ error: "Job Not Found" });
+    if (!job) return res.status(404).json({
+      error: "Job Not Found"
+    });
 
     //Make sure user owns job
     if (job.user.toString() !== req.user.id) {
-      return res.status(401).json({ error: "Not Authorized" });
+      return res.status(401).json({
+        error: "Not Authorized"
+      });
     }
 
     await Jobs.findByIdAndRemove(req.params.id);
 
-    res.json({ msg: "Job deleted", _id: req.params.id });
+    res.json({
+      msg: "Job deleted",
+      _id: req.params.id
+    });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: "Server error" });
+    res.status(500).send({
+      error: "Server error"
+    });
   }
 });
 
@@ -309,10 +423,18 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({
+        errors: errors.array()
+      });
     }
 
-    const { date, address, amount, material, description } = req.body;
+    const {
+      date,
+      address,
+      amount,
+      material,
+      description
+    } = req.body;
 
     try {
       const earned = amount / 2;
@@ -334,7 +456,9 @@ router.post(
       });
     } catch (err) {
       console.error(err.message);
-      res.status(500).send({ error: "Server error" });
+      res.status(500).send({
+        error: "Server error"
+      });
     }
   }
 );
@@ -344,7 +468,10 @@ router.post(
 //@ desc    Get All Cash jobs for period.
 //@access   Private.
 router.post("/getCash", auth, async (req, res) => {
-  const { from, to } = req.body;
+  const {
+    from,
+    to
+  } = req.body;
 
   let days = [];
   const getDays = (from, to) => {
@@ -383,14 +510,18 @@ router.post("/getCash", auth, async (req, res) => {
     getDays(from, to);
 
     let cashJobs = await JobsCash.find({
-      date: { $in: days },
+      date: {
+        $in: days
+      },
       user: req.user.id,
     });
 
     res.json(cashJobs);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: "Server Error" });
+    res.status(500).send({
+      error: "Server Error"
+    });
   }
 });
 
@@ -401,19 +532,28 @@ router.delete("/cash/:id", auth, async (req, res) => {
   try {
     let job = await JobsCash.findById(req.params.id);
 
-    if (!job) return res.status(404).json({ error: "Job Not Found" });
+    if (!job) return res.status(404).json({
+      error: "Job Not Found"
+    });
     //Make sure user has permissions owns job
     if (job.user.toString() !== req.user.id) {
-      return res.status(401).json({ error: "Not Authorized" });
+      return res.status(401).json({
+        error: "Not Authorized"
+      });
     }
 
     await JobsCash.findByIdAndRemove(req.params.id);
     return res
       .status(200)
-      .json({ msg: "Cash Job deleted", _id: req.params.id });
+      .json({
+        msg: "Cash Job deleted",
+        _id: req.params.id
+      });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: "Server error" });
+    res.status(500).send({
+      error: "Server error"
+    });
   }
 });
 
@@ -446,24 +586,35 @@ router.put("/cash/:id", auth, async (req, res) => {
   try {
     let job = await JobsCash.findById(req.params.id);
 
-    if (!job) return res.status(404).json({ error: "Job Not Found" });
+    if (!job) return res.status(404).json({
+      error: "Job Not Found"
+    });
 
     //Make sure user owns job
 
     if (job.user.toString() !== req.user.id) {
-      return res.status(401).json({ error: "Not Authorized" });
+      return res.status(401).json({
+        error: "Not Authorized"
+      });
     }
 
     job = await JobsCash.findByIdAndUpdate(
-      req.params.id,
-      { $set: jobFields },
-      { new: true }
+      req.params.id, {
+        $set: jobFields
+      }, {
+        new: true
+      }
     );
 
-    res.json({ msg: "Cash Job Was Successfully Edited", job });
+    res.json({
+      msg: "Cash Job Was Successfully Edited",
+      job
+    });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: "Server error" });
+    res.status(500).send({
+      error: "Server error"
+    });
   }
 });
 
@@ -473,11 +624,16 @@ router.put("/cash/:id", auth, async (req, res) => {
 
 router.get("/unpaid", auth, async (req, res) => {
   try {
-    let job = await Jobs.find({ unpaid: true, user: req.user.id });
+    let job = await Jobs.find({
+      unpaid: true,
+      user: req.user.id
+    });
     res.json(job);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: "Server Error" });
+    res.status(500).send({
+      error: "Server Error"
+    });
   }
 });
 
@@ -489,19 +645,30 @@ router.put("/unpaid/:id", auth, async (req, res) => {
   try {
     let job = await Jobs.findById(req.params.id);
 
-    if (!job) return res.status(404).json({ error: "Job Not Found" });
+    if (!job) return res.status(404).json({
+      error: "Job Not Found"
+    });
 
     //Make sure user owns job
 
     if (job.user.toString() !== req.user.id) {
-      return res.status(401).json({ error: "Not Authorized" });
+      return res.status(401).json({
+        error: "Not Authorized"
+      });
     }
-    job = await Jobs.findByIdAndUpdate(req.params.id, { unpaid: false });
+    job = await Jobs.findByIdAndUpdate(req.params.id, {
+      unpaid: false
+    },{new: true});
 
-    res.json({ msg: "Job Was Successfully Updated ", job });
+    res.json({
+      msg: "Job Was Successfully Updated ",
+      job
+    });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: "Server Error" });
+    res.status(500).send({
+      error: "Server Error"
+    });
   }
 });
 
@@ -527,11 +694,18 @@ router.get("/twoweeks", auth, async (req, res) => {
   }
 
   try {
-    let jobs = await Jobs.find({ date: { $in: days }, user: req.user.id });
+    let jobs = await Jobs.find({
+      date: {
+        $in: days
+      },
+      user: req.user.id
+    });
     res.json(jobs);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: "Server Error" });
+    res.status(500).send({
+      error: "Server Error"
+    });
   }
 });
 
@@ -540,7 +714,10 @@ router.get("/twoweeks", auth, async (req, res) => {
 //@access   Private
 
 router.post("/calendar/statement/", auth, async (req, res) => {
-  const { from, to } = req.body;
+  const {
+    from,
+    to
+  } = req.body;
 
   let days = [];
   const getDays = (from, to) => {
@@ -586,17 +763,38 @@ router.post("/calendar/statement/", auth, async (req, res) => {
 
   try {
     getDays(from, to);
-    let unpaid = await Jobs.find({ unpaid: true, user: req.user.id });
-    let period = await Jobs.find({ date: { $in: days }, user: req.user.id });
-    let cash = await JobsCash.find({ date: { $in: days }, user: req.user.id });
+    let unpaid = await Jobs.find({
+      unpaid: true,
+      user: req.user.id
+    });
+    let period = await Jobs.find({
+      date: {
+        $in: days
+      },
+      user: req.user.id
+    });
+    let cash = await JobsCash.find({
+      date: {
+        $in: days
+      },
+      user: req.user.id
+    });
     let material = await Material.find({
-      date: { $in: days },
-      type: { $in: "Material" },
+      date: {
+        $in: days
+      },
+      type: {
+        $in: "Material"
+      },
       user: req.user.id,
     });
     let gas = await Material.find({
-      date: { $in: days },
-      type: { $in: "Gas" },
+      date: {
+        $in: days
+      },
+      type: {
+        $in: "Gas"
+      },
       user: req.user.id,
     });
 
@@ -628,7 +826,9 @@ router.post("/calendar/statement/", auth, async (req, res) => {
     res.json(statement);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send({ error: "Server Error" });
+    res.status(500).send({
+      error: "Server Error"
+    });
   }
 
   // @route   POST api/jobs/sendfile
@@ -636,49 +836,108 @@ router.post("/calendar/statement/", auth, async (req, res) => {
   //@access   Private
   router.post("/sendfile", auth, async (req, res) => {
     try {
-      let unpaid = await Jobs.find({ unpaid: true, user: req.user.id });
-      const file = req.files.file;
-      let jobFiltred = [];
-      const extension = path.extname(file.name);
-      //Update Jobs
-      const updateJobs = async (invoiceNumbers) => {
-        await Jobs.updateMany(
-          { invoice: { $in: invoiceNumbers } },
-          { $set: { unpaid: false } },
-          { new: true }
-        );
-        const updatedResult = await Jobs.find({
-          invoice: { $in: invoiceNumbers },
-        });
+      // let unpaid = await Jobs.find({
+      //   unpaid: true,
+      //   user: req.user.id
+      // });
+      //const file = req.files.file;
+     // console.log(req.body.string)
+    
+//path.join(__dirname, "../files/ipex_test.pdf")
 
-        return updatedResult;
-      };
-      if (extension != ".pdf" || file === null) {
-        res.status(400).json({ error: "Please upload pdf file." });
-      } else {
-        pdf(file).then((data) => {
-          const promise = new Promise((resolve) => {
-            unpaid.map((job) => {
-              if (data.text.includes(job.invoice.toString()) === true) {
-                jobFiltred.push(job.invoice);
-              }
-              resolve(jobFiltred);
-            });
-          });
-          promise
-            .then((invoiceNumbers) => {
-              updateJobs(invoiceNumbers).then((jobs) => {
-                res.json({ msg: "Jobs was successfully updated", jobs });
-              });
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        });
-      }
+  
+
+  let dataBuffer = fs.readFileSync(path.join(__dirname, "../files/ipex.pdf"));
+  
+   extract(path.join(__dirname, "../files/ipex.pdf"),(err,pages)=>{
+     if(err){
+       console.log(err)
+       return
+     }
+     console.dir(pages)
+   })
+
+  //for a more concrete example, view the test file in this repo
+
+// let imageBuffer = Buffer.from(req.body.string.replace(/^data:.+;base64,/, ''), "base64");
+//       // console.log(imageBuffer)
+// //console.log(req.body.string.replace(/^data:.+;base64,/, ''))
+// const worker = createWorker({
+//     logger: m => console.log(m)
+// });
+
+// (async () => {
+//     await worker.load();
+//     await worker.loadLanguage('eng');
+//     await worker.initialize('eng');
+//     console.log("Recognizing...");
+//     const { data: { text } } = await worker.recognize(imageBuffer);
+//     console.log("Recognized text:", text);
+//     await worker.terminate();
+// })();
+
+
+
+
+
+      // console.log(file);
+      // let jobFiltred = [];
+      // const extension = path.extname(file.name);
+      //Update Jobs
+      // const updateJobs = async (invoiceNumbers) => {
+      //   await Jobs.updateMany({
+      //     invoice: {
+      //       $in: invoiceNumbers
+      //     }
+      //   }, {
+      //     $set: {
+      //       unpaid: false
+      //     }
+      //   }, {
+      //     new: true
+      //   });
+      //   const updatedResult = await Jobs.find({
+      //     invoice: {
+      //       $in: invoiceNumbers
+      //     },
+      //   });
+
+      //   return updatedResult;
+      // };
+      // if (extension != ".pdf" || file === null) {
+      //   res.status(400).json({
+      //     error: "Please upload pdf file."
+      //   });
+      // } else {
+      //   pdf(file).then((data) => {
+      //     const promise = new Promise((resolve) => {
+      //       unpaid.map((job) => {
+      //         if (data.text.includes(job.invoice.toString()) === true) {
+      //           jobFiltred.push(job.invoice);
+      //         }
+      //         console.log(data.text)
+      //         resolve(jobFiltred);
+      //       });
+      //     });
+      //     promise
+      //       .then((invoiceNumbers) => {
+      //         updateJobs(invoiceNumbers).then((jobs) => {
+      //           res.json({ msg: "Jobs was successfully updated", jobs });
+      //         });
+      //       })
+          
+      //       .catch((err) => {
+      //         console.log(err);
+      //       });
+      //   });
+      // }
+
+      
     } catch (err) {
       console.error(err.message);
-      res.status(500).send({ error: "Server error" });
+      res.status(500).send({
+        error: "Server error"
+      });
     }
   });
 });

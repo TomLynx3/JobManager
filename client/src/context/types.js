@@ -1,4 +1,5 @@
 export const GET_JOBS = "GET_JOBS";
+export const GET_ALL_JOBS = "GET_ALL_JOBS"
 export const ADD_JOB = "ADD_JOB";
 export const GET_JOBS_WEEK = "GET_JOB_WEEK";
 export const DELETE_JOB = "DELETE_JOB";
@@ -53,3 +54,5 @@ export const FILE_SEND_ERROR = "FILE_SEND_ERROR";
 export const CLEAN_SIGNUP_SUCCESS = "CLEAN_SIGNUP_SUCCESS";
 export const VERIFICATION_SUCCESS = "VERIFICATION_SUCCESS";
 export const VERIFICATION_FAIL = "VERIFICATION_FAIL";
+export const CLEAR_ALL_JOBS = "CLEAR_ALL_JOBS";
+

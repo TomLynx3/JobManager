@@ -1,5 +1,6 @@
 import {
   GET_JOBS,
+  GET_ALL_JOBS,
   ADD_JOB,
   GET_JOBS_WEEK,
   DELETE_JOB,
@@ -8,6 +9,7 @@ import {
   CLEAR_CURRENT,
   UPDATE_JOB,
   FILTER_JOB,
+  CLEAR_ALL_JOBS,
   CLEAR_FILTER,
   JOB_ERROR,
   CLEAR_FILTER_ITEM,
@@ -35,6 +37,11 @@ export default (state, action) => {
         ...state,
         jobs: action.payload,
       };
+    case GET_ALL_JOBS:
+        return {
+          ...state,
+        allJobs: [...state.allJobs].concat(action.payload)
+        }
     case SEND_FILE:
       return {
         ...state,
@@ -89,6 +96,11 @@ export default (state, action) => {
         current: null,
         filtred: null,
       };
+    case CLEAR_ALL_JOBS:
+      return {
+        ...state,
+        allJobs:[],
+      }
     case CLEAR_CASH:
       return {
         ...state,
@@ -134,7 +146,10 @@ export default (state, action) => {
       return {
         ...state,
         jobs: state.jobs.map((job) =>
-          job.unpaid === action.payload.job.unpaid ? action.payload.job : job
+          job._id === action.payload.job._id ? action.payload.job : job
+        ),
+        allJobs:state.allJobs.map((job)=> 
+          job._id === action.payload.job._id ? action.payload.job :job
         ),
         msg: action.payload.msg,
       };

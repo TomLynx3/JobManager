@@ -6,6 +6,7 @@ import jobReducer from "./jobReducer";
 
 import {
   GET_JOBS,
+  GET_ALL_JOBS,
   GET_JOBS_WEEK,
   ADD_JOB,
   CLEAR_JOBS,
@@ -24,6 +25,7 @@ import {
   CLEAR_CASH,
   UPDATE_CASH_JOB,
   GET_UNPAID_JOBS,
+  CLEAR_ALL_JOBS,
   GET_TWO_WEEKS,
   GET_CALENDAR_STATEMENT,
   SEND_FILE,
@@ -35,6 +37,7 @@ import {
 const JobState = (props) => {
   const initialState = {
     jobs: [],
+    allJobs:[],
     current: null,
     filtred: null,
     cashFiltred: null,
@@ -52,13 +55,31 @@ const JobState = (props) => {
   const getJobs = async () => {
     try {
       const res = await axios.get("/api/jobs");
-
+       
       dispatch({ type: GET_JOBS, payload: res.data });
     } catch (err) {
       dispatch({ type: JOB_ERROR });
       NotificationManager.error(err.response.data.error, "Error!", 2500);
     }
   };
+
+//Get All Jobs with limit 
+const getAllJobs = async(limit)=>{
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+  try {
+    const res = await axios.post("/api/jobs/alljobs", limit, config);
+   
+    dispatch({ type: GET_ALL_JOBS, payload: res.data });
+  } catch (err) {
+    dispatch({ type: JOB_ERROR });
+      NotificationManager.error(err.response.data.error, "Error!", 2500);
+  }
+}
+
 
   //Get Jobs cash
 
@@ -95,16 +116,54 @@ const JobState = (props) => {
   const sendFile = async (file) => {
     const formData = new FormData();
     formData.append("file", file.file);
+    const convertToBase64 = (file) =>{
+      return new Promise ((resolve,reject)=>{
+        const fileReader = new FileReader()
+        fileReader.readAsDataURL(file)
 
-    try {
-      const res = await axios.post("/api/jobs/sendfile", formData);
-      dispatch({ type: SEND_FILE, payload: res.data });
-      NotificationManager.success(res.data.msg, "Success!", 2500);
-    } catch (err) {
-      dispatch({ type: FILE_SEND_ERROR });
-      NotificationManager.error(err.response.data.error, "Error!", 2500);
+
+        fileReader.onload = ()=>{
+          resolve(fileReader.result)
+        }
+
+        fileReader.onerror = ((error)=>{
+          reject(error)
+        }) 
+      })
     }
-  };
+    
+    const base64 =  await convertToBase64(file.file)
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+   
+    //formData.append('file',file.file)
+    const obj = {
+      string:base64
+    }
+    
+  //   formData.append('base64',base64)
+  // console.log()
+   try {
+        const res = await axios.post("/api/jobs/sendfile", obj,config);
+        dispatch({ type: SEND_FILE, payload: res.data });
+        NotificationManager.success(res.data.msg, "Success!", 2500);
+      } catch (err) {
+        dispatch({ type: FILE_SEND_ERROR });
+        NotificationManager.error(err.response.data.error, "Error!", 2500);
+      }
+    
+
+
+  //console.log(x)
+  
+   // console.log(file)
+    
+  
+}
 
   //Add Job
   const addJob = async (job) => {
@@ -156,8 +215,14 @@ const JobState = (props) => {
   //Clear Jobs
 
   const clearJobs = () => {
+    
     dispatch({ type: CLEAR_JOBS });
   };
+  //clear all jobs
+  const  clearAllJobs = () =>{
+    console.log("3")
+    dispatch({ type: CLEAR_ALL_JOBS });
+  }
 
   //Set Current Job
   const setCurrent = (job) => {
@@ -269,6 +334,7 @@ const JobState = (props) => {
       const res = await axios.put(`/api/jobs/unpaid/${_id}`);
 
       dispatch({ type: UNPAID_UPDATE, payload: res.data });
+     
       NotificationManager.success(res.data.msg, "Success!", 2500);
     } catch (err) {
       dispatch({ type: JOB_ERROR });
@@ -326,6 +392,7 @@ const JobState = (props) => {
     <JobContext.Provider
       value={{
         jobs: state.jobs,
+        allJobs:state.allJobs,
         current: state.current,
         filtred: state.filtred,
         cashFiltred: state.cashFiltred,
@@ -334,6 +401,7 @@ const JobState = (props) => {
         calendarStatement: state.calendarStatement,
         file: state.file,
         getJobs,
+        getAllJobs,
         getJobsWeek,
         filterJobs,
         filterWeek,
@@ -356,6 +424,7 @@ const JobState = (props) => {
         sendFile,
         updateUnpaid,
         clearCashFilterItem,
+        clearAllJobs
       }}
     >
       {props.children}

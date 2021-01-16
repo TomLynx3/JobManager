@@ -80,6 +80,7 @@ const Breakdown = () => {
 
   return (
     <Fragment>
+      
       <Weeks props={getWeek} component={"Breakdown"}></Weeks>
       <Typography component="h3" variant="h6" className={classes.wrapIcon}>
         Total per Week: {""}

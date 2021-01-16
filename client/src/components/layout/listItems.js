@@ -11,6 +11,7 @@ import BarChartIcon from "@material-ui/icons/BarChart";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 import SearchIcon from "@material-ui/icons/Search";
+import ListIcon from '@material-ui/icons/List';
 import BuildIcon from "@material-ui/icons/Build";
 
 export const mainListItems = (
@@ -27,6 +28,12 @@ export const mainListItems = (
         <BarChartIcon />
       </ListItemIcon>
       <ListItemText primary="Reports" />
+    </ListItem>
+    <ListItem button component={Link} to="/alljobs">
+      <ListItemIcon>
+        <ListIcon />
+      </ListItemIcon>
+      <ListItemText primary="All Jobs" />
     </ListItem>
     <ListItem button component={Link} to="/search">
       <ListItemIcon>

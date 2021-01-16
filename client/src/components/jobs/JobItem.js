@@ -40,7 +40,7 @@ import {
   Typography,
 } from "@material-ui/core";
 
-const JobItem = ({ jobs, callback, component, close }) => {
+const JobItem = ({ jobs, callback, component, close ,test}) => {
   const useStyles = makeStyles(() => ({
     root: {
       minWidth: 275,
@@ -112,6 +112,8 @@ const JobItem = ({ jobs, callback, component, close }) => {
 
   const [openUnpaid, setUnpaid] = useState(false);
 
+
+
   const handleOpenUnpaid = () => {
     setUnpaid(true);
   };
@@ -178,6 +180,7 @@ const JobItem = ({ jobs, callback, component, close }) => {
     updateUnpaid(_id);
     setUnpaid(false);
     close();
+   
   };
 
   return (
